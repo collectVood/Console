@@ -79,7 +79,6 @@ namespace Console.Plugins
                     continue;
                 }
                 
-                
             }
 
             return toReturn;
