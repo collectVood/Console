@@ -4,7 +4,7 @@ namespace Console
 {
     public static class Log
     {
-        public static void Warning(string warning)
+        public static void Warning(string warning) 
         {
             if (string.IsNullOrEmpty(warning)) return;
             System.Console.ForegroundColor = ConsoleColor.Yellow;
