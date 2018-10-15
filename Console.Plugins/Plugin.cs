@@ -12,7 +12,6 @@ namespace Console.Plugins
         public string Filename { get; }
         public string Description { get; }
         public string Author { get; }
-        public 
         
         public bool IsCorePlugin { get; }
         
