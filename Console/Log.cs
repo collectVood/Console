@@ -2,7 +2,7 @@ using System;
 
 namespace Console
 {
-    public class Log
+    public static class Log
     {
         public static void Warning(string warning)
         {
