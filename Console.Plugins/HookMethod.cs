@@ -4,9 +4,9 @@ namespace Console.Plugins
 {
     public class HookMethod
     {
-        public string Name;
-        public MethodInfo Method;
-        public Plugin Owner;
+        public string Name { get; }
+        public MethodInfo Method { get; }
+        public Plugin Owner { get; }
         public ParameterInfo[] Parameters() => Method.GetParameters();
 
         public HookMethod(Plugin plugin, string name, MethodInfo method)
@@ -16,6 +16,11 @@ namespace Console.Plugins
             Owner = plugin;
         }
 
+        /// <summary>
+        /// Check if params have same signature with the method
+        /// </summary>
+        /// <param name="params1"></param>
+        /// <returns></returns>
         public bool HasMatchingSignature(object[] params1)
         {
             var params2 = Parameters();
