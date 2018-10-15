@@ -8,17 +8,15 @@ namespace Console.Plugins
     {
         #region Variables
         
-        protected Dictionary<string, List<HookMethod>> Hooks = new Dictionary<string, List<HookMethod>>();
+        protected internal Dictionary<string, List<HookMethod>> Hooks = Pool<Dictionary<string, List<HookMethod>>>.Get();
         
         #endregion
         
         public Plugin()
         {
             var type = GetType();
-            var typeList = new List<Type>()
-            {
-                type
-            };
+            var typeList = Pool<List<Type>>.Get();
+            typeList.Add(type);
             while (type != typeof(Plugin))
                 typeList.Add(type = type?.BaseType);
 
@@ -51,7 +49,7 @@ namespace Console.Plugins
         {
             if (!Hooks.TryGetValue(name, out var hookMethods))
             {
-                hookMethods = new List<HookMethod>();
+                hookMethods = Pool<List<HookMethod>>.Get();
                 Hooks[name] = hookMethods;
             }
             
