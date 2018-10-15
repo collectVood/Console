@@ -14,11 +14,14 @@ namespace Console
         /// </summary>
         static Pool()
         {
-            var pool = _Pool;
-            if (pool.Initialized)
-                return;
+            lock (_Pool)
+            {
+                var pool = _Pool;
+                if (pool.Initialized)
+                    return;
 
-            pool.Initialize();
+                pool.Initialize();
+            }
         }
 
         /// <summary>
@@ -40,17 +43,20 @@ namespace Console
         /// <returns>T from pool</returns>
         public static T Get()
         {
-            var pool = _Pool;
-
-            while (true)
+            lock (_Pool)
             {
-                if (pool._pool.Count == 0)
-                    Add();
-                
-                if (pool.Initialized)
-                    return pool._pool.Dequeue();
+                var pool = _Pool;
 
-                pool.Initialize();
+                while (true)
+                {
+                    if (pool._pool.Count == 0)
+                        Add();
+
+                    if (pool.Initialized)
+                        return pool._pool.Dequeue();
+
+                    pool.Initialize();
+                }
             }
         }
 
@@ -59,17 +65,20 @@ namespace Console
         /// </summary>
         public static void Add()
         {
-            var pool = _Pool;
-
-            while (true)
+            lock (_Pool)
             {
-                if (pool.Initialized)
-                {
-                    pool._pool.Enqueue(default(T));
-                    break;
-                }
+                var pool = _Pool;
 
-                pool.Initialize();
+                while (true)
+                {
+                    if (pool.Initialized)
+                    {
+                        pool._pool.Enqueue(default(T));
+                        break;
+                    }
+
+                    pool.Initialize();
+                }
             }
         }
     }
