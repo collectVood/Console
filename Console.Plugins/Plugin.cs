@@ -9,10 +9,25 @@ namespace Console.Plugins
         #region Variables
 
         public string Name { get; }
+        public string Title { get; }
         public string Filename { get; }
         public string Description { get; }
         public string Author { get; }
-        public 
+        public Version Version { get; }
+
+        // Empty. It must be empty.
+        public event OnPluginException OnException = (plugin, e) =>
+        {
+            Log.Exception(e);
+        };
+        public event OnPluginError OnError = (plugin, input) =>
+        {
+            Log.Error(input);
+        };
+        public event OnPluginWarning OnWarning = (plugin, input) =>
+        {
+            Log.Warning(input);
+        };
         
         public bool IsCorePlugin { get; }
         
@@ -23,6 +38,12 @@ namespace Console.Plugins
         public Plugin()
         {
             var type = GetType();
+
+            Name = type.Name;
+            Title = type.Name;
+            Author = "Unknown";
+            Version = new Version(1, 0, 0);
+            
             var typeList = Pool<List<Type>>.Get();
             typeList.Add(type);
             while (type != typeof(Plugin))
@@ -47,6 +68,36 @@ namespace Console.Plugins
         }
         
         #region Hooks
+
+        /// <summary>
+        /// Calls a hook
+        /// </summary>
+        /// <param name="hook">Hook name</param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public object CallHook(string hook, params object[] args)
+        {
+            try
+            {
+                return OnCallHook(hook, args);
+            }
+            catch (Exception e)
+            {
+                OnError(this, $"Failed to call hook '{hook}' on '{Name}' v{Version}");
+                OnException(this, e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Calls a hook
+        /// </summary>
+        /// <param name="hook">Hook name</param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public object Call(string hook, params object[] args) => CallHook(hook, args);
+
+        public T Call<T>(string hook, params object[] args) => (T) Convert.ChangeType(Call(hook, args), typeof(T));
 
         /// <summary>
         /// Adds a hook method to plugin
@@ -156,5 +207,9 @@ namespace Console.Plugins
         }
 
         #endregion
+        
+        public delegate void OnPluginException(Plugin plugin, Exception e);
+        public delegate void OnPluginError(Plugin plugin, string input);
+        public delegate void OnPluginWarning(Plugin plugin, string input);
     }
 }

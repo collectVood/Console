@@ -4,34 +4,62 @@ namespace Console
 {
     public class Log
     {
-        public static void Warning(string warning)
+        /// <summary>
+        /// Prints warning to console
+        /// </summary>
+        /// <param name="input"></param>
+        public static void Warning(string input)
         {
-            if (string.IsNullOrEmpty(warning)) return;
+            if (string.IsNullOrEmpty(input)) return;
             System.Console.ForegroundColor = ConsoleColor.Yellow;
-            System.Console.WriteLine("WARNING: " + warning);
+            Write(input);
             System.Console.ResetColor();
         }
         
-        public static void Error(string error)
+        /// <summary>
+        /// Prints error to console
+        /// </summary>
+        /// <param name="input"></param>
+        public static void Error(string input)
         {
-            if (string.IsNullOrEmpty(error)) return;
+            if (string.IsNullOrEmpty(input)) return;
             System.Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.WriteLine("ERROR: " + error);
+            Write(input);
             System.Console.ResetColor();
         }
         
-        public static void Debug(string debug)
+        /// <summary>
+        /// Logs exception
+        /// </summary>
+        /// <param name="input"></param>
+        public static void Exception(Exception e)
         {
-            if (string.IsNullOrEmpty(debug)) return;
+            // TODO
+        }
+        
+        /// <summary>
+        /// Prints informational text to console
+        /// </summary>
+        /// <param name="input"></param>
+        public static void Debug(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return;
             System.Console.ForegroundColor = ConsoleColor.Gray;
-            System.Console.WriteLine("DEBUG: " + debug);
+            Write(input);
             System.Console.ResetColor();
         }
-        
-        public static string Read()
+
+        /// <summary>
+        /// Prints text to console
+        /// </summary>
+        /// <param name="input"></param>
+        internal static void Write(string input)
         {
-            var read = System.Console.ReadLine();
-            return string.IsNullOrEmpty(read) ? "Input error!" : read;
+            if (string.IsNullOrEmpty(input)) return;
+            System.Console.WriteLine(input);
         }
+
+        public static string Read() => System.Console.ReadLine();
+        public static char ReadKey() => System.Console.ReadKey().KeyChar;
     }
 }

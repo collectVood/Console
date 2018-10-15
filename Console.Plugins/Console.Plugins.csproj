@@ -38,8 +38,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DescriptionAttribute.cs" />
     <Compile Include="HookMethod.cs" />
     <Compile Include="HookMethodAttribute.cs" />
+    <Compile Include="InfoAttribute.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
