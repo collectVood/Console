@@ -42,6 +42,11 @@ namespace Console.Plugins
         
         #region Hooks
 
+        /// <summary>
+        /// Adds a hook method to plugin
+        /// </summary>
+        /// <param name="name">Hook name</param>
+        /// <param name="method"></param>
         public void AddHookMethod(string name, MethodInfo method)
         {
             if (!Hooks.TryGetValue(name, out var hookMethods))
@@ -50,21 +55,47 @@ namespace Console.Plugins
                 Hooks[name] = hookMethods;
             }
             
-            hookMethods.Add(new HookMethod(name, method));
+            hookMethods.Add(new HookMethod(this, name, method));
         }
 
+        /// <summary>
+        /// Calls hooks if they exist
+        /// </summary>
+        /// <param name="name">Hook name</param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public object OnCallHook(string name, object[] args)
         {
             object toReturn = null;
             var flag = false;
             var hooks = FindHooks(name, args);
+            var hooksCount = hooks.Count;
+            for (var i = 0; i < hooksCount; i++)
+            {
+                var method = hooks[i];
+
+                try
+                {
+                    toReturn = method.Method.Invoke(this, args);
+                }
+                catch (Exception e)
+                {
+                    
+                    throw e;
+                }
+            }
             
             return toReturn;
         }
 
+        /// <summary>
+        /// Find all matching hooks for arguments
+        /// </summary>
+        /// <param name="name">Hook name</param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public List<HookMethod> FindHooks(string name, object[] args)
         {
-
             var toReturn = new List<HookMethod>();
             if (!Hooks.TryGetValue(name, out var methods))
                 return toReturn;
@@ -73,17 +104,51 @@ namespace Console.Plugins
             for (var i = 0; i < methodsCount; i++)
             {
                 var method = methods[i];
-                if (args == null || args.Length == 0 && method.Parameters().Length == 0)
-                {
-                    toReturn.Add(method);
-                    continue;
-                }
+                var length1 = args?.Length ?? 0;
+                var length2 = method.Parameters()?.Length ?? 0;
                 
+                if (length1 == 0 && length2 == 0 || CanUse(args, method))
+                    toReturn.Add(method);
             }
 
             return toReturn;
         }
-        
+
+        /// <summary>
+        /// Check if parameters could be used for method
+        /// </summary>
+        /// <param name="params1">Parameters</param>
+        /// <param name="method"></param>
+        public static bool CanUse(object[] params1, HookMethod method)
+        {
+            var params2 = method.Parameters();
+
+            var length1 = params1?.Length ?? 0;
+            var length2 = params2?.Length ?? 0;
+            if (params1 == null && params2 == null || length1 == 0 && length2 == 0)
+                return true;
+
+            var arr = new object[length2];
+
+            if (length2 > length1)
+            {
+                for (var i = 0; i < length2; i++)
+                {
+                    var param = params2?[i];
+                    if (param?.DefaultValue != null)
+                        arr[i] = param.DefaultValue;
+                    else if (param != null)
+                        arr[i] = Activator.CreateInstance(param.ParameterType);
+                    else
+                        arr[i] = null;
+                }
+            }
+            else
+                arr = params1;
+
+            return method.HasMatchingSignature(arr);
+        }
+
         #endregion
     }
 }
