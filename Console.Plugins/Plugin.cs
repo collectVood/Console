@@ -7,6 +7,14 @@ namespace Console.Plugins
     public class Plugin
     {
         #region Variables
+
+        public string Name { get; }
+        public string Filename { get; }
+        public string Description { get; }
+        public string Author { get; }
+        public 
+        
+        public bool IsCorePlugin { get; }
         
         protected internal Dictionary<string, List<HookMethod>> Hooks = Pool<Dictionary<string, List<HookMethod>>>.Get();
         
