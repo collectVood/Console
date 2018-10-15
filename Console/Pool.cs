@@ -6,7 +6,7 @@ namespace Console
     {
         private static Pool<T> _Pool = new Pool<T>();
         
-        private bool Initialized = false;
+        private bool Initialized;
         private Queue<T> _pool = new Queue<T>();
 
         /// <summary>
@@ -44,6 +44,9 @@ namespace Console
 
             while (true)
             {
+                if (pool._pool.Count == 0)
+                    Add();
+                
                 if (pool.Initialized)
                     return pool._pool.Dequeue();
 
@@ -61,7 +64,12 @@ namespace Console
             while (true)
             {
                 if (pool.Initialized)
+                {
                     pool._pool.Enqueue(default(T));
+                    break;
+                }
+
+                pool.Initialize();
             }
         }
     }
