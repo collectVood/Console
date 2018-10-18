@@ -50,7 +50,7 @@ namespace Console
                 while (true)
                 {
                     if (pool._pool.Count == 0)
-                        Add();
+                        pool.Initialize();
 
                     if (pool.Initialized)
                         return pool._pool.Dequeue();
@@ -68,17 +68,7 @@ namespace Console
             lock (_Pool)
             {
                 var pool = _Pool;
-
-                while (true)
-                {
-                    if (pool.Initialized)
-                    {
-                        pool._pool.Enqueue(default(T));
-                        break;
-                    }
-
-                    pool.Initialize();
-                }
+                pool._pool.Enqueue(default(T));
             }
         }
     }

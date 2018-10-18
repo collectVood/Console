@@ -72,18 +72,18 @@ namespace Console.Plugins
         /// <summary>
         /// Calls a hook
         /// </summary>
-        /// <param name="hook">Hook name</param>
+        /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public object CallHook(string hook, params object[] args)
+        public object CallHook(string name, params object[] args)
         {
             try
             {
-                return OnCallHook(hook, args);
+                return OnCallHook(name, args);
             }
             catch (Exception e)
             {
-                OnError(this, $"Failed to call hook '{hook}' on '{Name}' v{Version}");
+                OnError(this, $"Failed to call hook '{name}' on '{Name}' v{Version}");
                 OnException(this, e);
                 return null;
             }
@@ -92,12 +92,12 @@ namespace Console.Plugins
         /// <summary>
         /// Calls a hook
         /// </summary>
-        /// <param name="hook">Hook name</param>
+        /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public object Call(string hook, params object[] args) => CallHook(hook, args);
+        public object Call(string name, params object[] args) => CallHook(name, args);
 
-        public T Call<T>(string hook, params object[] args) => (T) Convert.ChangeType(Call(hook, args), typeof(T));
+        public T Call<T>(string name, params object[] args) => (T) Convert.ChangeType(Call(name, args), typeof(T));
 
         /// <summary>
         /// Adds a hook method to plugin
