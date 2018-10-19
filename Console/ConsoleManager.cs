@@ -8,8 +8,6 @@ namespace Console
     public class ConsoleManager
     {
         #region Variables
-
-//        public string Title { get; set; } = "Console PROJECT";
         
         private string input = string.Empty;
         private readonly List<string> inputHistory = PoolNew<List<string>>.Get();
@@ -26,6 +24,7 @@ namespace Console
 
         public void Initialize()
         {
+            System.Console.Title = "Console PROJECT";
             System.Console.OutputEncoding = Encoding.UTF8;
         }
 
@@ -39,8 +38,8 @@ namespace Console
 
         public void RedrawInputLine()
         {
-//            if (nextUpdate - 0.449999988079071 > Interface.Controller.Now || LineWidth <= 0)
-//                return;
+            if (nextUpdate - 0.5 > Interface.Controller.Now || LineWidth <= 0)
+                return;
 
             try
             {
@@ -66,13 +65,12 @@ namespace Console
             if (!Valid)
                 return;
 
-//            if (nextUpdate < Interface.Controller.Now)
-//            {
-//                RedrawInputLine();
-//                nextUpdate = Interface.Controller.Now + 0.5f;
-//            }
-
-//            System.Console.Title = Title;
+            if (nextUpdate < Interface.Controller.Now)
+            {
+                RedrawInputLine();
+                nextUpdate = Interface.Controller.Now + 0.5f;
+            }
+            
             try
             {
                 if (!System.Console.KeyAvailable)
