@@ -8,7 +8,7 @@ namespace Console
     {
         public static Controller Controller = Controller.Instance;
         
-        public static List<Plugin> Plugins { get; } = Pool<List<Plugin>>.Get();
+        public static List<Plugin> Plugins { get; } = PoolNew<List<Plugin>>.Get();
         
         /// <summary>
         /// Calls a specified hook on every plugin
@@ -26,7 +26,7 @@ namespace Console
                 results[i] = Plugins[i].Call<T>(name, args);
             }
 
-            var conflicts = Pool<List<HookConflict>>.Get();
+            var conflicts = PoolNew<List<HookConflict>>.Get();
             var result = Pool<T>.Get();
             for (var i1 = 0; i1 < pluginsCount; i1++)
             {

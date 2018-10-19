@@ -19,5 +19,15 @@ namespace Console.Plugins
             a != null && b != null && a.Major == b.Major && a.Minor == b.Minor && a.Patch == b.Patch;
 
         public static bool operator !=(Version a, Version b) => !(a == b);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Version ver)
+                return this == ver;
+
+            return false;
+        }
+
+        public override int GetHashCode() => ToString().GetHashCode();
     }
 }

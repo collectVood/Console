@@ -31,7 +31,7 @@ namespace Console.Plugins
         
         public bool IsCorePlugin { get; }
         
-        protected internal Dictionary<string, List<HookMethod>> Hooks = Pool<Dictionary<string, List<HookMethod>>>.Get();
+        protected internal Dictionary<string, List<HookMethod>> Hooks = PoolNew<Dictionary<string, List<HookMethod>>>.Get();
         
         #endregion
         
@@ -44,7 +44,7 @@ namespace Console.Plugins
             Author = "Unknown";
             Version = new Version(1, 0, 0);
             
-            var typeList = Pool<List<Type>>.Get();
+            var typeList = PoolNew<List<Type>>.Get();
             typeList.Add(type);
             while (type != typeof(Plugin))
                 typeList.Add(type = type?.BaseType);
@@ -108,7 +108,7 @@ namespace Console.Plugins
         {
             if (!Hooks.TryGetValue(name, out var hookMethods))
             {
-                hookMethods = Pool<List<HookMethod>>.Get();
+                hookMethods = PoolNew<List<HookMethod>>.Get();
                 Hooks[name] = hookMethods;
             }
             
@@ -124,7 +124,6 @@ namespace Console.Plugins
         public object OnCallHook(string name, object[] args)
         {
             object toReturn = null;
-            var flag = false;
             var hooks = FindHooks(name, args);
             var hooksCount = hooks.Count;
             for (var i = 0; i < hooksCount; i++)
@@ -137,7 +136,6 @@ namespace Console.Plugins
                 }
                 catch (Exception e)
                 {
-                    
                     throw e;
                 }
             }

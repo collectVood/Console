@@ -22,7 +22,6 @@ namespace Console
             if (string.IsNullOrEmpty(input)) return;
             System.Console.ForegroundColor = ColorWarning;
             Write(input);
-            System.Console.ResetColor();
         }
         
         /// <summary>

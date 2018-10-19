@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
 
 namespace Console
 {
@@ -29,20 +28,6 @@ namespace Console
             
             ConsoleManager = new ConsoleManager();
             ConsoleManager.Initialize();
-
-            StartFrames();
-        }
-
-        private void StartFrames()
-        {
-            var thread = new Thread(() =>
-            {
-                while (true)
-                {
-                    ConsoleManager.Update();
-                    Interface.CallHook("OnFrame");
-                }
-            });
         }
     }
 }

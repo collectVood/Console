@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.Win32.SafeHandles;
 
 namespace Console
 {
     public class ConsoleManager
     {
         #region Variables
-        
-        public string Title { get; set; }
+
+//        public string Title { get; set; } = "Console PROJECT";
         
         private string input = string.Empty;
-        private readonly List<string> inputHistory = Pool<List<string>>.Get();
+        private readonly List<string> inputHistory = PoolNew<List<string>>.Get();
         private int inputHistoryIndex;
-        public Func<string, string[]> Completion;
+        public Func<string, string[]> Completion = s => new[] {"test"};
         private float nextUpdate;
         
         public static int LineWidth => System.Console.BufferWidth;
@@ -41,12 +39,11 @@ namespace Console
 
         public void RedrawInputLine()
         {
-            if (nextUpdate - 0.449999988079071 > Interface.Controller.Now || LineWidth <= 0)
-                return;
+//            if (nextUpdate - 0.449999988079071 > Interface.Controller.Now || LineWidth <= 0)
+//                return;
 
             try
             {
-                ++System.Console.CursorTop;
                 System.Console.CursorLeft = 0;
                 System.Console.BackgroundColor = Log.ColorBackground;
                 ClearLine(1);
@@ -69,13 +66,13 @@ namespace Console
             if (!Valid)
                 return;
 
-            if (nextUpdate < Interface.Controller.Now)
-            {
-                RedrawInputLine();
-                nextUpdate = Interface.Controller.Now + 0.5f;
-            }
+//            if (nextUpdate < Interface.Controller.Now)
+//            {
+//                RedrawInputLine();
+//                nextUpdate = Interface.Controller.Now + 0.5f;
+//            }
 
-            System.Console.Title = Title;
+//            System.Console.Title = Title;
             try
             {
                 if (!System.Console.KeyAvailable)
