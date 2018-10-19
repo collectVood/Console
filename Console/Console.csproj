@@ -38,11 +38,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleManager.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="DescriptionAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="HookConflict.cs" />
+    <Compile Include="HookMethod.cs" />
+    <Compile Include="HookMethodAttribute.cs" />
+    <Compile Include="InfoAttribute.cs" />
+    <Compile Include="Interface.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Plugin.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

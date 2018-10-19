@@ -4,10 +4,7 @@
     {
         public static void Main(string[] args)
         {
-            while (true)
-            {
-                
-            }
+            var controller = new Controller();
         }
     }
 }

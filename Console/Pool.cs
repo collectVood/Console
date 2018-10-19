@@ -4,10 +4,10 @@ namespace Console
 {
     public class Pool<T>
     {
-        private static Pool<T> _Pool = new Pool<T>();
+        internal static Pool<T> _Pool = new Pool<T>();
         
         private bool Initialized;
-        private Queue<T> _pool = new Queue<T>();
+        internal Queue<T> _pool = new Queue<T>();
 
         /// <summary>
         /// Create new pool and initialize it

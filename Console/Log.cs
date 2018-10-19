@@ -2,8 +2,17 @@ using System;
 
 namespace Console
 {
-    public class Log
+    public static class Log
     {
+        internal const ConsoleColor ColorDefault = ConsoleColor.Gray;
+        internal const ConsoleColor ColorWarning = ConsoleColor.Yellow;
+        internal const ConsoleColor ColorError = ConsoleColor.Red;
+        internal const ConsoleColor ColorException = ConsoleColor.Red;
+        internal const ConsoleColor ColorDebug = ConsoleColor.Gray;
+        internal const ConsoleColor ColorInfo = ConsoleColor.Gray;
+        internal const ConsoleColor ColorInput = ConsoleColor.Green;
+        internal const ConsoleColor ColorBackground = ConsoleColor.Black;
+        
         /// <summary>
         /// Prints warning to console
         /// </summary>
@@ -11,7 +20,7 @@ namespace Console
         public static void Warning(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Console.ForegroundColor = ColorWarning;
             Write(input);
             System.Console.ResetColor();
         }
@@ -23,9 +32,8 @@ namespace Console
         public static void Error(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ConsoleColor.Red;
+            System.Console.ForegroundColor = ColorError;
             Write(input);
-            System.Console.ResetColor();
         }
         
         /// <summary>
@@ -34,19 +42,31 @@ namespace Console
         /// <param name="input"></param>
         public static void Exception(Exception e)
         {
-            // TODO
+            if (e?.ToString() == null) return;
+            System.Console.ForegroundColor = ColorException;
+            Write(e.ToString());
+        }
+        
+        /// <summary>
+        /// Prints debug text to console
+        /// </summary>
+        /// <param name="input"></param>
+        public static void Debug(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return;
+            System.Console.ForegroundColor = ColorDebug;
+            Write("[DEBUG] " + input);
         }
         
         /// <summary>
         /// Prints informational text to console
         /// </summary>
         /// <param name="input"></param>
-        public static void Debug(string input)
+        public static void Info(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ConsoleColor.Gray;
+            System.Console.ForegroundColor = ColorInfo;
             Write(input);
-            System.Console.ResetColor();
         }
 
         /// <summary>
@@ -56,6 +76,7 @@ namespace Console
         internal static void Write(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
+            System.Console.ForegroundColor = ColorDefault;
             System.Console.WriteLine(input);
         }
 

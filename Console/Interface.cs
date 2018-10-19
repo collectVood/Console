@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Console.Plugins;
 
-namespace Console.Plugins
+namespace Console
 {
     public static class Interface
     {
+        public static Controller Controller = Controller.Instance;
+        
         public static List<Plugin> Plugins { get; } = Pool<List<Plugin>>.Get();
         
         /// <summary>
@@ -48,5 +52,21 @@ namespace Console.Plugins
 
             return result;
         }
+
+        /// <summary>
+        /// Calls a specified hook on every plugin
+        /// </summary>
+        /// <param name="name">Hook name</param>
+        /// <param name="args"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static object Call(string name, params object[] args) => Call<object>(name, args);
+
+        /// <summary>
+        /// Calls a specified hook on every plugin
+        /// </summary>
+        /// <param name="name">Hook name</param>
+        /// <param name="args"></param>
+        public static void CallHook(string name, params object[] args) => Call(name, args);
     }
 }
