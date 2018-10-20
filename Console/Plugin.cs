@@ -11,6 +11,7 @@ namespace Console.Plugins
         public string Name { get; }
         public string Title { get; }
         public string Filename { get; }
+        public string Path { get; internal set; }
         public string Description { get; }
         public string Author { get; }
         public Version Version { get; }
@@ -43,6 +44,14 @@ namespace Console.Plugins
             Title = type.Name;
             Author = "Unknown";
             Version = new Version(1, 0, 0);
+
+            var info = type.GetCustomAttribute<InfoAttribute>();
+            if (info != null)
+            {
+                Title = info.Title;
+                Author = info.Author;
+                Version = info.Version;
+            }
             
             var typeList = PoolNew<List<Type>>.Get();
             typeList.Add(type);
@@ -132,7 +141,7 @@ namespace Console.Plugins
 
                 try
                 {
-                    toReturn = method.Method.Invoke(this, args);
+                    toReturn = method?.Method?.Invoke(this, args);
                 }
                 catch (Exception e)
                 {
