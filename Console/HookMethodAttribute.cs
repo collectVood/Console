@@ -2,7 +2,7 @@ using System;
 
 namespace Console.Plugins
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public class HookMethodAttribute : Attribute
     {
         public string Name;

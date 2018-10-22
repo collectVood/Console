@@ -2,7 +2,7 @@ using System;
 
 namespace Console.Plugins
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class InfoAttribute : Attribute
     {
         public string Title { get; }

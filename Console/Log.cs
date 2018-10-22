@@ -34,14 +34,13 @@ namespace Console
             System.Console.ForegroundColor = ColorError;
             Write(input);
         }
-        
+
         /// <summary>
         /// Logs exception
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="e"></param>
         public static void Exception(Exception e)
         {
-            if (e?.ToString() == null) return;
             System.Console.ForegroundColor = ColorException;
             Write(e.ToString());
         }

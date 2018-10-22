@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Console.Plugins
 {
@@ -15,24 +16,10 @@ namespace Console.Plugins
         public string Description { get; }
         public string Author { get; }
         public Version Version { get; }
-
-        // Empty. It must be empty.
-        public event OnPluginException OnException = (plugin, e) =>
-        {
-            Log.Exception(e);
-        };
-        public event OnPluginError OnError = (plugin, input) =>
-        {
-            Log.Error(input);
-        };
-        public event OnPluginWarning OnWarning = (plugin, input) =>
-        {
-            Log.Warning(input);
-        };
         
         public bool IsCorePlugin { get; }
         
-        protected internal Dictionary<string, List<HookMethod>> Hooks = PoolNew<Dictionary<string, List<HookMethod>>>.Get();
+        protected internal Dictionary<string, HookMethod> Hooks = PoolNew<Dictionary<string, HookMethod>>.Get();
         
         #endregion
         
@@ -67,10 +54,9 @@ namespace Console.Plugins
                 for (var i2 = 0; i2 < methodsCount; i2++)
                 {
                     var method = methods[i2];
-                    if (method.GetCustomAttributes<HookMethodAttribute>(true) is List<HookMethodAttribute> attributes &&
-                        attributes.Count > 0)
+                    if (method.GetCustomAttribute<HookMethodAttribute>(false) is HookMethodAttribute attribute)
                     {
-                        AddHookMethod(attributes[0]?.Name, method);
+                        AddHookMethod(attribute.Name, method);
                     }
                 }
             }
@@ -92,8 +78,8 @@ namespace Console.Plugins
             }
             catch (Exception e)
             {
-                OnError(this, $"Failed to call hook '{name}' on '{Name}' v{Version}");
-                OnException(this, e);
+                Log.Error($"Failed to call hook '{name}' on '{Name}' v{Version}");
+                Log.Exception(e);
                 return null;
             }
         }
@@ -106,7 +92,11 @@ namespace Console.Plugins
         /// <returns></returns>
         public object Call(string name, params object[] args) => CallHook(name, args);
 
-        public T Call<T>(string name, params object[] args) => (T) Convert.ChangeType(Call(name, args), typeof(T));
+        public T Call<T>(string name, params object[] args)
+        {
+            var result = Call(name, args);
+            return result == null ? default(T) : (T) Convert.ChangeType(result, typeof(T));
+        }
 
         /// <summary>
         /// Adds a hook method to plugin
@@ -115,13 +105,8 @@ namespace Console.Plugins
         /// <param name="method"></param>
         public void AddHookMethod(string name, MethodInfo method)
         {
-            if (!Hooks.TryGetValue(name, out var hookMethods))
-            {
-                hookMethods = PoolNew<List<HookMethod>>.Get();
-                Hooks[name] = hookMethods;
-            }
-            
-            hookMethods.Add(new HookMethod(this, name, method));
+            if (Hooks.ContainsKey(name)) return;
+            Hooks[name] = new HookMethod(this, name, method);
         }
 
         /// <summary>
@@ -132,24 +117,17 @@ namespace Console.Plugins
         /// <returns></returns>
         public object OnCallHook(string name, object[] args)
         {
-            object toReturn = null;
-            var hooks = FindHooks(name, args);
-            var hooksCount = hooks.Count;
-            for (var i = 0; i < hooksCount; i++)
+            var hooks = FindHook(name, args);
+            try
             {
-                var method = hooks[i];
-
-                try
-                {
-                    toReturn = method?.Method?.Invoke(this, args);
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
+                return hooks?.Method?.Invoke(this, args);
             }
-            
-            return toReturn;
+            catch (Exception e)
+            {
+                Log.Exception(e);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -158,25 +136,7 @@ namespace Console.Plugins
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public List<HookMethod> FindHooks(string name, object[] args)
-        {
-            var toReturn = new List<HookMethod>();
-            if (!Hooks.TryGetValue(name, out var methods))
-                return toReturn;
-            
-            var methodsCount = methods.Count;
-            for (var i = 0; i < methodsCount; i++)
-            {
-                var method = methods[i];
-                var length1 = args?.Length ?? 0;
-                var length2 = method.Parameters()?.Length ?? 0;
-                
-                if (length1 == 0 && length2 == 0 || CanUse(args, method))
-                    toReturn.Add(method);
-            }
-
-            return toReturn;
-        }
+        public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !CanUse(args, hook) ? null : hook;
 
         /// <summary>
         /// Check if parameters could be used for method
