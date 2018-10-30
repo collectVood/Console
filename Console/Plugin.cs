@@ -26,21 +26,28 @@ namespace Console.Plugins
 
         internal static void CreatePlugin(Type type, string path, bool corePlugin)
         {
-            if (type == null || !(Activator.CreateInstance(type) is Plugin plugin))
+            try
             {
-                Log.Error($"Failed to load plugin with path: {path}");
-                return;
-            }
+                if (type == null || !(Activator.CreateInstance(type) is Plugin plugin))
+                {
+                    Log.Error($"Failed to load plugin with path: {path}");
+                    return;
+                }
 
-            plugin.Path = path;
-            plugin.Filename = string.IsNullOrEmpty(path) ? path : System.IO.Path.GetFileName(path);
-            plugin.IsCorePlugin = corePlugin;
-            
-            Interface.Plugins.Add(plugin);
-            Log.Info($"Loaded plugin {plugin.Title} from {plugin.Author} v{plugin.Version}");
+                plugin.Path = path;
+                plugin.Filename = string.IsNullOrEmpty(path) ? path : System.IO.Path.GetFileName(path);
+                plugin.IsCorePlugin = corePlugin;
+
+                Interface.Plugins.Add(plugin);
+                Log.Info($"Loaded plugin {plugin.Title} from {plugin.Author} v{plugin.Version}");
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e);
+            }
         }
 
-        protected Plugin()
+        public Plugin()
         {
             var type = GetType();
 

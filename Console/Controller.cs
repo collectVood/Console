@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using Console.Plugins;
 
 namespace Console
@@ -44,11 +45,13 @@ namespace Console
             timer.Start();
             TimeSinceStartup = () => (float) timer.Elapsed.TotalSeconds;
             
+            // Initializing console
+            ConsoleManager = new ConsoleManager();
+            ConsoleManager.Initialize();
+            
             // Loading core plugins
             Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty, true);
             
-            ConsoleManager = new ConsoleManager();
-            ConsoleManager.Initialize();
         }
 
         private void OnFileChanged(object sender, FileSystemEventArgs args)
