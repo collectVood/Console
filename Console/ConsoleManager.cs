@@ -12,23 +12,45 @@ namespace Console
         private string input = string.Empty;
         private readonly List<string> inputHistory = PoolNew<List<string>>.Get();
         private int inputHistoryIndex;
-        public Func<string, string[]> Completion = s => new[] {"test"};
-        private float nextUpdate;
+
+        private int completionIndex;
+        private Func<string, string[]> completion = s =>
+        {
+            var pluginsCount = Interface.Plugins.Count;
+            var commands = new string[pluginsCount];
+            var currentCommand = 0;
+            for (var i = 0; i < pluginsCount; i++)
+            {
+                var plugin = Interface.Plugins[i];
+                foreach (var kvp in plugin.Commands)
+                {
+                    if (kvp.Key.StartsWith(s) || kvp.Value.FullName.StartsWith(s))
+                        commands[currentCommand++] = kvp.Value.FullName;
+                }
+            }
+
+            return commands;
+        };
+
+        private Action<string> onInput = s => { Interface.CallHook("IOnServerInput", s); };
         
-        public static int LineWidth => System.Console.BufferWidth;
-        public static bool Valid => LineWidth > 0;
+        
+        private float nextUpdate;
+
+        private int LineWidth => System.Console.BufferWidth;
+        private bool Valid => LineWidth > 0;
         
         #endregion
         
         #region Console
 
-        public void Initialize()
+        public static void Initialize()
         {
             System.Console.Title = "Console PROJECT";
             System.Console.OutputEncoding = Encoding.UTF8;
         }
 
-        public void ClearLine(int numLines)
+        private void ClearLine(int numLines)
         {
             System.Console.CursorLeft = 0;
             System.Console.Write(new string(' ', LineWidth * numLines));
@@ -36,7 +58,7 @@ namespace Console
             System.Console.CursorLeft = 0;
         }
 
-        public void RedrawInputLine()
+        private void RedrawInputLine()
         {
             if (nextUpdate - 0.5 > Interface.Controller.Now || LineWidth <= 0)
                 return;
@@ -85,6 +107,9 @@ namespace Console
             if (key.Key != ConsoleKey.DownArrow && key.Key != ConsoleKey.UpArrow)
                 inputHistoryIndex = 0;
 
+            if (key.Key != ConsoleKey.Tab)
+                completionIndex = 0;
+
             switch (key.Key)
             {
                 case ConsoleKey.Backspace:
@@ -98,12 +123,11 @@ namespace Console
                 }
                 case ConsoleKey.Tab:
                 {
-                    var completion = Completion;
                     var arr = completion?.Invoke(input);
                     if (arr == null || arr.Length == 0)
                         break;
 
-                    input = arr[0];
+                    input = arr[completionIndex++];
                     RedrawInputLine();
                     break;
                 }
@@ -115,7 +139,8 @@ namespace Console
                     inputHistory.Insert(0, input);
                     if (inputHistory.Count > 50)
                         inputHistory.RemoveRange(50, inputHistory.Count - 50);
-                    
+
+                    onInput(input);
                     input = string.Empty;
                     RedrawInputLine();
                     break;

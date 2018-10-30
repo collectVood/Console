@@ -9,21 +9,38 @@ namespace Console.Plugins
     {
         #region Variables
 
-        public string Name { get; }
-        public string Title { get; }
-        public string Filename { get; }
+        public string Name { get; internal set; }
+        public string Title { get; internal set; }
+        public string Filename { get; internal set; }
         public string Path { get; internal set; }
-        public string Description { get; }
-        public string Author { get; }
-        public Version Version { get; }
+        public string Description { get; internal set; }
+        public string Author { get; internal set; }
+        public Version Version { get; internal set; }
         
-        public bool IsCorePlugin { get; }
+        public bool IsCorePlugin { get; internal set; }
         
         protected internal Dictionary<string, HookMethod> Hooks = PoolNew<Dictionary<string, HookMethod>>.Get();
+        protected internal Dictionary<string, Command> Commands = PoolNew<Dictionary<string, Command>>.Get();
         
         #endregion
-        
-        public Plugin()
+
+        internal static void CreatePlugin(Type type, string path, bool corePlugin)
+        {
+            if (type == null || !(Activator.CreateInstance(type) is Plugin plugin))
+            {
+                Log.Error($"Failed to load plugin with path: {path}");
+                return;
+            }
+
+            plugin.Path = path;
+            plugin.Filename = string.IsNullOrEmpty(path) ? path : System.IO.Path.GetFileName(path);
+            plugin.IsCorePlugin = corePlugin;
+            
+            Interface.Plugins.Add(plugin);
+            Log.Info($"Loaded plugin {plugin.Title} from {plugin.Author} v{plugin.Version}");
+        }
+
+        protected Plugin()
         {
             var type = GetType();
 
@@ -38,6 +55,12 @@ namespace Console.Plugins
                 Title = info.Title;
                 Author = info.Author;
                 Version = info.Version;
+            }
+
+            var description = type.GetCustomAttribute<DescriptionAttribute>();
+            if (description != null)
+            {
+                Description = description.Description;
             }
             
             var typeList = PoolNew<List<Type>>.Get();
@@ -54,9 +77,14 @@ namespace Console.Plugins
                 for (var i2 = 0; i2 < methodsCount; i2++)
                 {
                     var method = methods[i2];
-                    if (method.GetCustomAttribute<HookMethodAttribute>(false) is HookMethodAttribute attribute)
+                    if (method.GetCustomAttribute<HookMethodAttribute>(false) is HookMethodAttribute attribute1)
                     {
-                        AddHookMethod(attribute.Name, method);
+                        AddHookMethod(attribute1.Name, method);
+                    }
+
+                    if (method.GetCustomAttribute<CommandAttribute>(false) is CommandAttribute attribute2)
+                    {
+                        AddCommand(attribute2.Name, method);
                     }
                 }
             }
@@ -105,8 +133,17 @@ namespace Console.Plugins
         /// <param name="method"></param>
         public void AddHookMethod(string name, MethodInfo method)
         {
-            if (Hooks.ContainsKey(name)) return;
-            Hooks[name] = new HookMethod(this, name, method);
+            if (Hooks.ContainsKey(name))
+            {
+                Log.Warning($"Plugin {Title} tried to register existing hook");
+                return;
+            }
+            
+            var hook = new HookMethod(this, name, method);
+            if (!IsCorePlugin && hook.IsCoreHook)
+                return;
+            
+            Hooks[name] = hook;
         }
 
         /// <summary>
@@ -136,14 +173,14 @@ namespace Console.Plugins
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !CanUse(args, hook) ? null : hook;
+        public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !CanUseHook(args, hook) ? null : hook;
 
         /// <summary>
         /// Check if parameters could be used for method
         /// </summary>
         /// <param name="params1">Parameters</param>
         /// <param name="method"></param>
-        public static bool CanUse(object[] params1, HookMethod method)
+        public static bool CanUseHook(object[] params1, HookMethod method)
         {
             var params2 = method.Parameters();
 
@@ -175,8 +212,19 @@ namespace Console.Plugins
 
         #endregion
         
-        public delegate void OnPluginException(Plugin plugin, Exception e);
-        public delegate void OnPluginError(Plugin plugin, string input);
-        public delegate void OnPluginWarning(Plugin plugin, string input);
+        #region Commands
+
+        public void AddCommand(string name, MethodInfo method)
+        {
+            if (Commands.ContainsKey(name))
+            {
+                Log.Warning($"Plugin {Title} is trying to register existing command");
+                return;
+            }
+
+            Commands[name] = new Command(this, name, method);
+        }
+
+        #endregion
     }
 }

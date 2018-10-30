@@ -38,6 +38,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command.cs" />
+    <Compile Include="CommandAttribute.cs" />
+    <Compile Include="ConsoleBase.cs" />
     <Compile Include="ConsoleManager.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="DescriptionAttribute.cs" />

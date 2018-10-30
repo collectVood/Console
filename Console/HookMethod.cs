@@ -9,6 +9,8 @@ namespace Console.Plugins
         public Plugin Owner { get; }
         public ParameterInfo[] Parameters() => Method.GetParameters();
 
+        public bool IsCoreHook => Name.StartsWith("I");
+
         public HookMethod(Plugin plugin, string name, MethodInfo method)
         {
             Method = method;

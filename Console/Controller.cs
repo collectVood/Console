@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Console.Plugins;
 
 namespace Console
 {
@@ -42,6 +43,9 @@ namespace Console
             timer = new Stopwatch();
             timer.Start();
             TimeSinceStartup = () => (float) timer.Elapsed.TotalSeconds;
+            
+            // Loading core plugins
+            Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty, true);
             
             ConsoleManager = new ConsoleManager();
             ConsoleManager.Initialize();

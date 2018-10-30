@@ -20,8 +20,7 @@ namespace Console
         public static void Warning(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ColorWarning;
-            Write(input);
+            Controller.ConsoleManager.AddMessage(input, ColorWarning);
         }
         
         /// <summary>
@@ -31,8 +30,7 @@ namespace Console
         public static void Error(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ColorError;
-            Write(input);
+            Controller.ConsoleManager.AddMessage(input, ColorError);
         }
 
         /// <summary>
@@ -41,8 +39,7 @@ namespace Console
         /// <param name="e"></param>
         public static void Exception(Exception e)
         {
-            System.Console.ForegroundColor = ColorException;
-            Write(e.ToString());
+            Controller.ConsoleManager.AddMessage(e.ToString(), ColorException);
         }
         
         /// <summary>
@@ -52,8 +49,7 @@ namespace Console
         public static void Debug(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ColorDebug;
-            Write("[DEBUG] " + input);
+            Controller.ConsoleManager.AddMessage("[DEBUG] " + input, ColorDebug);
         }
         
         /// <summary>
@@ -63,8 +59,7 @@ namespace Console
         public static void Info(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ColorInfo;
-            Write(input);
+            Controller.ConsoleManager.AddMessage(input, ColorInfo);
         }
 
         /// <summary>
@@ -74,8 +69,7 @@ namespace Console
         internal static void Write(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            System.Console.ForegroundColor = ColorDefault;
-            System.Console.WriteLine(input);
+            Controller.ConsoleManager.AddMessage(input, ColorDefault);
         }
 
         public static string Read() => System.Console.ReadLine();
