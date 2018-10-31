@@ -17,6 +17,7 @@ namespace Console.Plugins
         public string Author { get; internal set; }
         public Version Version { get; internal set; }
         
+        public bool IsLoaded { get; internal set; }
         public bool IsCorePlugin { get; internal set; }
         
         protected internal Dictionary<string, HookMethod> Hooks = PoolNew<Dictionary<string, HookMethod>>.Get();
@@ -24,7 +25,7 @@ namespace Console.Plugins
         
         #endregion
 
-        internal static void CreatePlugin(Type type, string path, bool corePlugin)
+        internal static void CreatePlugin(Type type, string path, bool corePlugin = false)
         {
             try
             {
@@ -105,8 +106,11 @@ namespace Console.Plugins
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public object CallHook(string name, params object[] args)
+        private object CallHook(string name, params object[] args)
         {
+            if (!IsLoaded)
+                return null;
+            
             try
             {
                 return OnCallHook(name, args);
@@ -146,11 +150,7 @@ namespace Console.Plugins
                 return;
             }
             
-            var hook = new HookMethod(this, name, method);
-            if (!IsCorePlugin && hook.IsCoreHook)
-                return;
-            
-            Hooks[name] = hook;
+            Hooks[name] = new HookMethod(this, name, method);
         }
 
         /// <summary>
@@ -159,12 +159,12 @@ namespace Console.Plugins
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public object OnCallHook(string name, object[] args)
+        private object OnCallHook(string name, object[] args)
         {
-            var hooks = FindHook(name, args);
+            var hook = FindHook(name, args);
             try
             {
-                return hooks?.Method?.Invoke(this, args);
+                return hook?.Method?.Invoke(this, hook.FormatArguments(args));
             }
             catch (Exception e)
             {
@@ -180,43 +180,26 @@ namespace Console.Plugins
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !CanUseHook(args, hook) ? null : hook;
+        public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !hook.CanUseHook(this, args) ? null : hook;
 
-        /// <summary>
-        /// Check if parameters could be used for method
-        /// </summary>
-        /// <param name="params1">Parameters</param>
-        /// <param name="method"></param>
-        public static bool CanUseHook(object[] params1, HookMethod method)
+        #endregion
+        
+        #region Plugin Management
+
+        public static void Load(string name)
         {
-            var params2 = method.Parameters();
-
-            var length1 = params1?.Length ?? 0;
-            var length2 = params2?.Length ?? 0;
-            if (params1 == null && params2 == null || length1 == 0 && length2 == 0)
-                return true;
-
-            var arr = new object[length2];
-
-            if (length2 > length1)
-            {
-                for (var i = 0; i < length2; i++)
-                {
-                    var param = params2?[i];
-                    if (param?.DefaultValue != null)
-                        arr[i] = param.DefaultValue;
-                    else if (param != null)
-                        arr[i] = Activator.CreateInstance(param.ParameterType);
-                    else
-                        arr[i] = null;
-                }
-            }
-            else
-                arr = params1;
-
-            return method.HasMatchingSignature(arr);
+            var plugin = Interface.Plugins.Find(x => x.Name == name);
+            if (plugin != null)
+                plugin.IsLoaded = true;
         }
 
+        public static void Unload(string name)
+        {
+            var plugin = Interface.Plugins.Find(x => x.Name == name);
+            if (plugin != null)
+                plugin.IsLoaded = false;
+        }
+        
         #endregion
         
         #region Commands

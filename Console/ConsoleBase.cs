@@ -11,13 +11,21 @@ namespace Console.Plugins
         }
 
         [HookMethod("IOnServerCommand")]
-        public void IOnServerCommand(string command, params string[] args)
+        public void IOnServerCommand(string command)
         {
             Log.Debug($"Called a command {command}");
+            Command cmd;
+            Interface.Plugins.ForEach(x =>
+            {
+                foreach (var kvp in x.Commands)
+                {
+                    // Bla
+                }
+            });
         }
 
         [Command("test")]
-        public void CommandTest()
+        public void CommandTest(object[] args)
         {
             Log.Debug("TEST CALLED");
         }

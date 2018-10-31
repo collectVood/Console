@@ -91,7 +91,7 @@ namespace Console
                 var assembly = Assembly.Load(File.ReadAllBytes(path));
                 var type = assembly.GetType("Console.Plugins." + Path.GetFileNameWithoutExtension(path));
                 
-                Plugin.CreatePlugin(type, path, false);
+                Plugin.CreatePlugin(type, path);
             }
             catch (Exception e)
             {

@@ -20,7 +20,7 @@ namespace Console.Plugins
             FullName = $"{plugin.Name}.{name}".ToLower();
         }
 
-        public void Call(params object[] args)
+        public void Call(object[] args)
         {
             try
             {

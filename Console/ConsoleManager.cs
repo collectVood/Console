@@ -8,6 +8,8 @@ namespace Console
     public class ConsoleManager
     {
         #region Variables
+
+        private float UpdateFrequency = 0.25f;
         
         private string input = string.Empty;
         private readonly List<string> inputHistory = PoolNew<List<string>>.Get();
@@ -16,16 +18,21 @@ namespace Console
         private int completionIndex;
         private Func<string, string[]> completion = s =>
         {
+            if (s.StartsWith("/"))
+                s = s.Remove(0, 1);
+            
             var pluginsCount = Interface.Plugins.Count;
-            var commands = new string[pluginsCount];
+            var commands = new string[0];
             var currentCommand = 0;
             for (var i = 0; i < pluginsCount; i++)
             {
                 var plugin = Interface.Plugins[i];
                 foreach (var kvp in plugin.Commands)
                 {
-                    if (kvp.Key.StartsWith(s) || kvp.Value.FullName.StartsWith(s))
-                        commands[currentCommand++] = kvp.Value.FullName;
+                    if (!kvp.Key.StartsWith(s) && !kvp.Value.FullName.StartsWith(s)) continue;
+                    
+                    Array.Resize(ref commands, commands.Length + 1);
+                    commands[currentCommand++] = $"/{kvp.Value.FullName}";
                 }
             }
 
@@ -33,7 +40,6 @@ namespace Console
         };
 
         private Action<string> onInput = s => { Interface.CallHook("IOnServerInput", s); };
-        
         
         private float nextUpdate;
 
@@ -60,7 +66,7 @@ namespace Console
 
         private void RedrawInputLine()
         {
-            if (nextUpdate - 0.5 > Interface.Controller.Now || LineWidth <= 0)
+            if (nextUpdate - UpdateFrequency > Interface.Controller.Now || LineWidth <= 0)
                 return;
 
             try
@@ -68,13 +74,12 @@ namespace Console
                 System.Console.CursorLeft = 0;
                 System.Console.BackgroundColor = Log.ColorBackground;
                 ClearLine(1);
-                if (input.Length != 0)
-                {
-                    System.Console.ForegroundColor = Log.ColorInput;
-                    System.Console.Write(input.Length >= LineWidth - 2
-                        ? input.Substring(input.Length - (LineWidth - 2))
-                        : input);
-                }
+                if (string.IsNullOrEmpty(input)) return;
+                
+                System.Console.ForegroundColor = Log.ColorInput;
+                System.Console.Write(input.Length >= LineWidth - 2
+                    ? input.Substring(input.Length - (LineWidth - 2))
+                    : input);
             }
             catch (Exception e)
             {
@@ -90,7 +95,7 @@ namespace Console
             if (nextUpdate < Interface.Controller.Now)
             {
                 RedrawInputLine();
-                nextUpdate = Interface.Controller.Now + 0.5f;
+                nextUpdate = Interface.Controller.Now + UpdateFrequency;
             }
             
             try
@@ -127,7 +132,10 @@ namespace Console
                     if (arr == null || arr.Length == 0)
                         break;
 
-                    input = arr[completionIndex++];
+                    if (arr.Length < completionIndex + 1)
+                        completionIndex = 0;
+                    
+                    input = arr[completionIndex++] ?? string.Empty;
                     RedrawInputLine();
                     break;
                 }
@@ -140,7 +148,7 @@ namespace Console
                     if (inputHistory.Count > 50)
                         inputHistory.RemoveRange(50, inputHistory.Count - 50);
 
-                    onInput(input);
+                    onInput?.Invoke(input);
                     input = string.Empty;
                     RedrawInputLine();
                     break;
@@ -182,7 +190,7 @@ namespace Console
                 }
                 default:
                 {
-                    if (key.KeyChar == char.MinValue)
+                    if (key.KeyChar == char.MinValue || key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.LeftArrow)
                         break;
 
                     input += key.KeyChar;
