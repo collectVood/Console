@@ -1,6 +1,6 @@
 namespace Console.Plugins
 {
-    [Info("ExamplePlugin", "Iv Misticos", "1.0.0")]
+    [Info("Example Plugin", "Iv Misticos", "1.0.0")]
     [Description("Test Plugin")]
     public class ExamplePlugin : Plugin
     {

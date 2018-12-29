@@ -20,16 +20,21 @@ namespace Console.Plugins
             FullName = $"{plugin.Name}.{name}".ToLower();
         }
 
-        public void Call(object[] args)
+        public void Call(string command)
         {
+            if (!CanUseCommand(command))
+                return;
+            
             try
             {
-                Method?.Invoke(Owner, args);
+                Method?.Invoke(Owner, null);
             }
             catch (Exception e)
             {
                 Log.Exception(e);
             }
         }
+
+        internal bool CanUseCommand(string parameters) => parameters.Length == 0;
     }
 }

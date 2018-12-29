@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Console.Plugins;
 
@@ -8,9 +9,12 @@ namespace Console
 {
     public static class Interface
     {
-        public static Controller Controller = Controller.Instance;
+        #region Variables
         
+        public static Controller Controller = Controller.Instance;
         public static List<Plugin> Plugins { get; } = PoolNew<List<Plugin>>.Get();
+        
+        #endregion
         
         /// <summary>
         /// Calls a specified hook on every plugin
@@ -22,39 +26,38 @@ namespace Console
         {
             try
             {
-                var pluginsCount = Plugins.Count;
-                var results = new object[pluginsCount];
-                for (var i = 0; i < pluginsCount; i++)
+                object result = null;
+                var results = PoolNew<List<HookResult>>.Get();
+                var conflicts = PoolNew<List<HookResult>>.Get();
+
+                for (var i = 0; i < Plugins.Count; i++)
                 {
-                    results[i] = Plugins[i]?.Call(name, args);
+                    var plugin = Plugins[i];
+                    var currentResult = new HookResult(plugin, plugin.IsLoaded ? plugin.Call(name, args) : null);
+                    results.Add(currentResult);
+                    if (currentResult.Result != null)
+                        result = currentResult.Result;
                 }
 
-                var conflicts = PoolNew<List<HookConflict>>.Get();
-                object result = null;
-                for (var i1 = 0; i1 < pluginsCount; i1++)
+                for (var i = 0; i < Plugins.Count - 1; i++)
                 {
-                    for (var i2 = 0; i2 < pluginsCount; i2++)
+                    for (var j = i + 1; j < Plugins.Count; j++)
                     {
-                        if (i1 == i2)
-                            continue;
+                        var result1 = results[i];
+                        var result2 = results[j];
 
-                        var result1 = results[i1];
-                        var result2 = results[i2];
-                        if (result1 == null && result2 == null)
+                        if (result1.Result == null || result2.Result == null || result1.Result.Equals(result2.Result))
                             continue;
-
-                        if (ReferenceEquals(result1, result2))
-                            result = result1;
-                        else
-                            conflicts.Add(new HookConflict(Plugins[i1], Plugins[i2], result1, result2));
+                        
+                        conflicts.Add(result1);
+                        conflicts.Add(result2);
                     }
                 }
 
-                if (conflicts.Count > 0)
-                    Log.Warning(
-                        $"Calling hook '{name}' resulted in a conflict between the following plugins: {string.Join(", ", conflicts)}");
+                if (conflicts.Count <= 0) return result;
 
-                return result;
+                Log.Warning($"Calling hook '{name}' resulted in a conflict between the following plugins: {string.Join(", ", conflicts.Distinct())}");
+                return null;
             }
             catch (Exception e)
             {
@@ -112,8 +115,26 @@ namespace Console
             if (plugin == null)
                 return;
 
+            Unload(plugin.Name);
             Plugins.Remove(plugin);
-            Log.Info($"Unloaded plugin {plugin.Title} from {plugin.Author} v{plugin.Version}");
+        }
+
+        public static void Load(string name)
+        {
+            var plugin = Plugins.Find(x => x.Name == name);
+            if (plugin == null) return;
+            
+            plugin.IsLoaded = true;
+            Log.Info($"Loaded plugin {plugin.Title} by {plugin.Author} v{plugin.Version}");
+        }
+
+        public static void Unload(string name)
+        {
+            var plugin = Plugins.Find(x => x.Name == name);
+            if (plugin == null) return;
+            
+            plugin.IsLoaded = false;
+            Log.Info($"Unloaded plugin {plugin.Title} by {plugin.Author} v{plugin.Version}");
         }
     }
 }

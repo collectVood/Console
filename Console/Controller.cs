@@ -33,9 +33,24 @@ namespace Console
             
             // File System Watchers
             FSWatcherPlugins = new FileSystemWatcher(PluginDirectory, "*.dll");
-            FSWatcherPlugins.Created += OnFileChanged;
-            FSWatcherPlugins.Changed += OnFileChanged;
-            FSWatcherPlugins.Deleted += OnFileChanged;
+            FSWatcherPlugins.Created += (sender, args) =>
+            {
+                Interface.LoadAssembly(args.FullPath);
+            };
+            FSWatcherPlugins.Changed += (sender, args) =>
+            {
+                Interface.UnloadAssembly(args.FullPath);
+                Interface.LoadAssembly(args.FullPath);
+            };
+            FSWatcherPlugins.Deleted += (sender, args) =>
+            {
+                Interface.UnloadAssembly(args.FullPath);
+            };
+            FSWatcherPlugins.Renamed += (sender, args) =>
+            {
+                Interface.UnloadAssembly(args.OldFullPath);
+                Interface.LoadAssembly(args.FullPath);
+            };
             FSWatcherPlugins.IncludeSubdirectories = false;
             FSWatcherPlugins.EnableRaisingEvents = true;
             GC.KeepAlive(FSWatcherPlugins);
@@ -51,36 +66,6 @@ namespace Console
             
             // Loading core plugins
             Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty, true);
-            
-        }
-
-        private void OnFileChanged(object sender, FileSystemEventArgs args)
-        {
-            if (args == null)
-                return;
-
-            switch (args.ChangeType)
-            {
-                case WatcherChangeTypes.Created:
-                {
-                    Interface.LoadAssembly(args.FullPath);
-                    break;
-                }
-
-                case WatcherChangeTypes.Changed:
-                case WatcherChangeTypes.Renamed:
-                {
-                    Interface.UnloadAssembly(args.FullPath);
-                    Interface.LoadAssembly(args.FullPath);
-                    break;
-                }
-
-                case WatcherChangeTypes.Deleted:
-                {
-                    Interface.UnloadAssembly(args.FullPath);
-                    break;
-                }
-            }
         }
     }
 }

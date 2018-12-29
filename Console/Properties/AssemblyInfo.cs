@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Console")]
 [assembly: AssemblyDescription("Console project")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Iv Misticos and Hamster")]
+[assembly: AssemblyCompany("Iv Misticos")]
 [assembly: AssemblyProduct("Console")]
-[assembly: AssemblyCopyright("Copyright © Iv Misticos and Hamster 2018")]
+[assembly: AssemblyCopyright("Copyright © Iv Misticos 2018-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

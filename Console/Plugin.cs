@@ -40,7 +40,7 @@ namespace Console.Plugins
                 plugin.IsCorePlugin = corePlugin;
 
                 Interface.Plugins.Add(plugin);
-                Log.Info($"Loaded plugin {plugin.Title} from {plugin.Author} v{plugin.Version}");
+                Interface.Load(plugin.Name);
             }
             catch (Exception e)
             {
@@ -85,14 +85,14 @@ namespace Console.Plugins
                 for (var i2 = 0; i2 < methodsCount; i2++)
                 {
                     var method = methods[i2];
-                    if (method.GetCustomAttribute<HookMethodAttribute>(false) is HookMethodAttribute attribute1)
+                    if (method.GetCustomAttribute<HookMethodAttribute>(false) is HookMethodAttribute hookMethodAttribute)
                     {
-                        AddHookMethod(attribute1.Name, method);
+                        AddHookMethod(hookMethodAttribute.Name, method);
                     }
 
-                    if (method.GetCustomAttribute<CommandAttribute>(false) is CommandAttribute attribute2)
+                    if (method.GetCustomAttribute<CommandAttribute>(false) is CommandAttribute commandAttribute)
                     {
-                        AddCommand(attribute2.Name, method);
+                        AddCommand(commandAttribute.Name, method);
                     }
                 }
             }
@@ -182,24 +182,6 @@ namespace Console.Plugins
         /// <returns></returns>
         public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !hook.CanUseHook(this, args) ? null : hook;
 
-        #endregion
-        
-        #region Plugin Management
-
-        public static void Load(string name)
-        {
-            var plugin = Interface.Plugins.Find(x => x.Name == name);
-            if (plugin != null)
-                plugin.IsLoaded = true;
-        }
-
-        public static void Unload(string name)
-        {
-            var plugin = Interface.Plugins.Find(x => x.Name == name);
-            if (plugin != null)
-                plugin.IsLoaded = false;
-        }
-        
         #endregion
         
         #region Commands

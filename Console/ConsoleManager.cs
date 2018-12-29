@@ -190,7 +190,7 @@ namespace Console
                 }
                 default:
                 {
-                    if (key.KeyChar == char.MinValue || key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.LeftArrow)
+                    if (key.KeyChar == char.MinValue)
                         break;
 
                     input += key.KeyChar;

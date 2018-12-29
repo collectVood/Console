@@ -45,7 +45,7 @@
     <Compile Include="Controller.cs" />
     <Compile Include="DescriptionAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="HookConflict.cs" />
+    <Compile Include="HookResult.cs" />
     <Compile Include="HookMethod.cs" />
     <Compile Include="HookMethodAttribute.cs" />
     <Compile Include="InfoAttribute.cs" />
