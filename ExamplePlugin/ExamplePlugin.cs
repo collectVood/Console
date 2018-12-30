@@ -4,10 +4,11 @@ namespace Console.Plugins
     [Description("Test Plugin")]
     public class ExamplePlugin : Plugin
     {
-        [HookMethod("OnFrame")]
-        public void OnFrame()
+        [HookMethod("OnServerCommand")]
+        public void OnServerCommand(string cmd)
         {
-            Log.Info("OnFrame called!");
-        }
+            Log.Info("OnServerCommand called!");
+            Log.Info($"Command: {cmd}");
+        } 
     }
 }

@@ -25,14 +25,17 @@ namespace Console.Plugins
         
         #endregion
 
-        internal static void CreatePlugin(Type type, string path, bool corePlugin = false)
+        internal static bool CreatePlugin(Type type, string path, bool corePlugin = false)
         {
             try
             {
+                if (Interface.FindPlugin(path) != null)
+                    return false;
+                
                 if (type == null || !(Activator.CreateInstance(type) is Plugin plugin))
                 {
                     Log.Error($"Failed to load plugin with path: {path}");
-                    return;
+                    return false;
                 }
 
                 plugin.Path = path;
@@ -40,11 +43,13 @@ namespace Console.Plugins
                 plugin.IsCorePlugin = corePlugin;
 
                 Interface.Plugins.Add(plugin);
-                Interface.Load(plugin.Name);
+                Interface.Load(path);
+                return true;
             }
             catch (Exception e)
             {
                 Log.Exception(e);
+                return false;
             }
         }
 

@@ -1,15 +1,22 @@
-﻿namespace Console
+﻿using System;
+
+namespace Console
 {
     public static class Program
     {
         public static void Main(string[] args)
         {
-            var controller = new Controller();
+            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+            {
+                Log.Exception(eventArgs.Exception);
+                System.Console.ReadKey();
+            };
+            
+            new Controller();
 
             while (true)
             {
-                Controller.ConsoleManager.Update();
-                Interface.CallHook("OnFrame");
+                Controller.Instance.OnFrame();
             }
         }
     }

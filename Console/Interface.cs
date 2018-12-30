@@ -13,8 +13,11 @@ namespace Console
         
         public static Controller Controller = Controller.Instance;
         public static List<Plugin> Plugins { get; } = PoolNew<List<Plugin>>.Get();
+        internal static PluginsQueue PluginsQueue = new PluginsQueue();
         
         #endregion
+        
+        #region Hooks
         
         /// <summary>
         /// Calls a specified hook on every plugin
@@ -86,6 +89,8 @@ namespace Console
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
         public static void CallHook(string name, params object[] args) => Call(name, args);
+        
+        #endregion
 
         internal static void LoadAssembly(string path)
         {
@@ -93,8 +98,12 @@ namespace Console
             {
                 var assembly = Assembly.Load(File.ReadAllBytes(path));
                 var type = assembly.GetType("Console.Plugins." + Path.GetFileNameWithoutExtension(path));
-                
+
                 Plugin.CreatePlugin(type, path);
+            }
+            catch (IOException)
+            {
+                Controller.NextFrame(() => LoadAssembly(path));
             }
             catch (Exception e)
             {
@@ -104,37 +113,46 @@ namespace Console
 
         internal static void UnloadAssembly(string path)
         {
-            var pluginsCount = Plugins.Count;
-            var plugin = (Plugin) null;
-            for (var i = 0; i < pluginsCount; i++)
-            {
-                if (Plugins[i].Path == path)
-                    plugin = Plugins[i];
-            }
-
+            var plugin = FindPlugin(path);
             if (plugin == null)
                 return;
 
-            Unload(plugin.Name);
+            Unload(path);
             Plugins.Remove(plugin);
         }
 
-        public static void Load(string name)
+        public static bool Load(string pathOrName)
         {
-            var plugin = Plugins.Find(x => x.Name == name);
-            if (plugin == null) return;
+            var plugin = FindPlugin(pathOrName);
+            if (plugin == null)
+                return false;
             
             plugin.IsLoaded = true;
             Log.Info($"Loaded plugin {plugin.Title} by {plugin.Author} v{plugin.Version}");
+            return true;
         }
 
-        public static void Unload(string name)
+        public static bool Unload(string pathOrName)
         {
-            var plugin = Plugins.Find(x => x.Name == name);
-            if (plugin == null) return;
+            var plugin = FindPlugin(pathOrName);
+            if (plugin == null)
+                return false;
             
             plugin.IsLoaded = false;
             Log.Info($"Unloaded plugin {plugin.Title} by {plugin.Author} v{plugin.Version}");
+            return true;
+        }
+
+        public static Plugin FindPlugin(string pathOrName)
+        {
+            for (var i = 0; i < Plugins.Count; i++)
+            {
+                var plugin = Plugins[i];
+                if (plugin.Path == pathOrName || plugin.Name == pathOrName)
+                    return plugin;
+            }
+
+            return null;
         }
     }
 }

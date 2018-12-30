@@ -4,9 +4,9 @@ namespace Console
 {
     public class Pool<T>
     {
-        private static Pool<T> _Pool = new Pool<T>();
+        private static Pool<T> _currentPool = new Pool<T>();
 
-        private bool Initialized;
+        private bool _initialized;
         private Queue<T> _pool = new Queue<T>();
 
         /// <summary>
@@ -14,10 +14,10 @@ namespace Console
         /// </summary>
         static Pool()
         {
-            lock (_Pool)
+            lock (_currentPool)
             {
-                var pool = _Pool;
-                if (pool.Initialized)
+                var pool = _currentPool;
+                if (pool._initialized)
                     return;
 
                 pool.Initialize();
@@ -34,7 +34,7 @@ namespace Console
                 Add();
             }
 
-            Initialized = true;
+            _initialized = true;
         }
 
         /// <summary>
@@ -43,16 +43,16 @@ namespace Console
         /// <returns>T from pool</returns>
         public static T Get()
         {
-            lock (_Pool)
+            lock (_currentPool)
             {
-                var pool = _Pool;
+                var pool = _currentPool;
 
                 while (true)
                 {
                     if (pool._pool.Count == 0)
                         pool.Initialize();
 
-                    if (pool.Initialized)
+                    if (pool._initialized)
                         return pool._pool.Dequeue();
 
                     pool.Initialize();
@@ -65,9 +65,9 @@ namespace Console
         /// </summary>
         private static void Add()
         {
-            lock (_Pool)
+            lock (_currentPool)
             {
-                var pool = _Pool;
+                var pool = _currentPool;
                 pool._pool.Enqueue(default(T));
             }
         }
@@ -75,9 +75,9 @@ namespace Console
 
     public class PoolNew<T> where T : new()
     {
-        private static PoolNew<T> _Pool = new PoolNew<T>();
+        private static PoolNew<T> _currentPool = new PoolNew<T>();
 
-        private bool Initialized;
+        private bool _initialized;
         private Queue<T> _pool = new Queue<T>();
 
         /// <summary>
@@ -85,10 +85,10 @@ namespace Console
         /// </summary>
         static PoolNew()
         {
-            lock (_Pool)
+            lock (_currentPool)
             {
-                var pool = _Pool;
-                if (pool.Initialized)
+                var pool = _currentPool;
+                if (pool._initialized)
                     return;
 
                 pool.Initialize();
@@ -105,7 +105,7 @@ namespace Console
                 Add();
             }
 
-            Initialized = true;
+            _initialized = true;
         }
 
         /// <summary>
@@ -114,16 +114,16 @@ namespace Console
         /// <returns>T from pool</returns>
         public static T Get()
         {
-            lock (_Pool)
+            lock (_currentPool)
             {
-                var pool = _Pool;
+                var pool = _currentPool;
 
                 while (true)
                 {
                     if (pool._pool.Count == 0)
                         pool.Initialize();
 
-                    if (pool.Initialized)
+                    if (pool._initialized)
                         return pool._pool.Dequeue();
 
                     pool.Initialize();
@@ -136,9 +136,9 @@ namespace Console
         /// </summary>
         private static void Add()
         {
-            lock (_Pool)
+            lock (_currentPool)
             {
-                var pool = _Pool;
+                var pool = _currentPool;
                 pool._pool.Enqueue(new T());
             }
         }
