@@ -18,16 +18,24 @@ namespace Console.Plugins.Core
         }
 
         [HookMethod("IOnCommand")]
-        public void IOnCommand(string command)
+        public void IOnCommand(string entry)
         {
-            Log.Debug($"Called a command {command}");
-            Interface.CallHook("OnCommand", command);
+            var arg = CommandArgument.Build(entry);
+            if (!arg.Execute())
+            {
+                Log.Info("Couldn't execute latest command");
+                return;
+            }
+            
+            Interface.CallHook("OnCommand", arg);
         }
 
         [Command("test")]
-        public void CommandTest()
+        public void CommandTest(string[] args)
         {
+            var arguments = args.Length == 0 ? "Nothing" : string.Join(" ", args);
             Log.Debug("TEST CALLED");
+            Log.Debug($"Arguments: {arguments}");
         }
     }
 }

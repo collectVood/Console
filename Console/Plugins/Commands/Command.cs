@@ -24,7 +24,7 @@ namespace Console.Plugins.Commands
         {
             try
             {
-                Method?.Invoke(Owner, null);
+                Method?.Invoke(Owner, new object[] {arguments});
             }
             catch (Exception e)
             {

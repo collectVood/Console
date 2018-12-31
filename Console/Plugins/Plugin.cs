@@ -210,6 +210,12 @@ namespace Console.Plugins
                 return;
             }
 
+            if (!Command.HasMatchingSignature(method))
+            {
+                Log.Warning($"Plugin {Title} tried to register command with incorrect method arguments");
+                return;
+            }
+
             Commands[name] = new Command(this, name, method);
         }
 

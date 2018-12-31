@@ -1,6 +1,3 @@
-using System;
-using System.Text.RegularExpressions;
-
 namespace Console.Plugins.Commands
 {
     public class CommandArgument
@@ -8,10 +5,7 @@ namespace Console.Plugins.Commands
         #region Variables
 
         public Command Command { get; private set; }
-        
-        public string Entry { get; private set; }
         public string[] Args { get; private set; }
-
         public bool IsValid => Command != null && Command.Owner.IsLoaded;
 
         #endregion
@@ -39,18 +33,8 @@ namespace Console.Plugins.Commands
                 return this;
 
             var spaceIndex = entry.IndexOf(' ');
-            var command = string.Empty;
-            if (spaceIndex == -1)
-            {
-                if (entry.Length != 0)
-                {
-                    command = entry;
-                }
-                else
-                {
-                    return this;
-                }
-            }
+            Log.Debug($"Spaceindex: {spaceIndex}");
+            var command = spaceIndex == -1 ? entry : entry.Substring(0, spaceIndex);
 
             for (var i = 0; i < Interface.Plugins.Count; i++)
             {
@@ -64,14 +48,13 @@ namespace Console.Plugins.Commands
                 return this;
             }
 
-            var text = entry.Substring(spaceIndex + 1);
+            var text = spaceIndex == -1 ? string.Empty : entry.Substring(spaceIndex + 1);
             Args = BuildArguments(text);
 
             return this;
         }
 
-        // Original (not escaped): "([^"']+)"|'([^"']+)'|[^"'a-zA-Z\s]?([^"'\s]+)[^"'a-zA-Z\s]?
-        public string[] BuildArguments(string entry)
+        public static string[] BuildArguments(string entry)
         {
             if (string.IsNullOrEmpty(entry))
                 return new string[0];
