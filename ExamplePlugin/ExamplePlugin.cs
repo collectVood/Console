@@ -1,3 +1,5 @@
+using Console.Plugins.Hooks;
+
 namespace Console.Plugins
 {
     [Info("Example Plugin", "Iv Misticos", "1.0.0")]

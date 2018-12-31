@@ -1,4 +1,8 @@
 // ReSharper disable InconsistentNaming
+
+using Console.Plugins.Commands;
+using Console.Plugins.Hooks;
+
 namespace Console.Plugins.Core
 {
     [Info("ConsoleBase", "Iv Misticos", "1.0.0")]

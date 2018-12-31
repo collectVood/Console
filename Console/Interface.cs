@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Console.Plugins;
+using Console.Plugins.Hooks;
 
 namespace Console
 {
@@ -113,42 +114,54 @@ namespace Console
 
         internal static void UnloadAssembly(string path)
         {
-            var plugin = FindPlugin(path);
+            var plugin = FindPluginByPath(path);
             if (plugin == null)
                 return;
 
-            Unload(path);
+            Unload(plugin.Name);
             Plugins.Remove(plugin);
         }
 
-        public static bool Load(string pathOrName)
+        public static bool Load(string name)
         {
-            var plugin = FindPlugin(pathOrName);
+            var plugin = FindPlugin(name);
             if (plugin == null)
                 return false;
             
             plugin.IsLoaded = true;
-            Log.Info($"Loaded plugin {plugin.Title} by {plugin.Author} v{plugin.Version}");
+            Log.Info($"Loaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
             return true;
         }
 
-        public static bool Unload(string pathOrName)
+        public static bool Unload(string name)
         {
-            var plugin = FindPlugin(pathOrName);
+            var plugin = FindPlugin(name);
             if (plugin == null)
                 return false;
             
             plugin.IsLoaded = false;
-            Log.Info($"Unloaded plugin {plugin.Title} by {plugin.Author} v{plugin.Version}");
+            Log.Info($"Unloaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
             return true;
         }
 
-        public static Plugin FindPlugin(string pathOrName)
+        public static Plugin FindPlugin(string name)
         {
             for (var i = 0; i < Plugins.Count; i++)
             {
                 var plugin = Plugins[i];
-                if (plugin.Path == pathOrName || plugin.Name == pathOrName)
+                if (plugin.Name == name)
+                    return plugin;
+            }
+
+            return null;
+        }
+
+        public static Plugin FindPluginByPath(string path)
+        {
+            for (var i = 0; i < Plugins.Count; i++)
+            {
+                var plugin = Plugins[i];
+                if (plugin.Path == path)
                     return plugin;
             }
 

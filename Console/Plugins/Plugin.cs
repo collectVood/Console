@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Console.Plugins.Commands;
+using Console.Plugins.Hooks;
+
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace Console.Plugins
@@ -9,42 +12,38 @@ namespace Console.Plugins
     {
         #region Variables
 
-        public string Name { get; internal set; }
-        public string Title { get; internal set; }
-        public string Filename { get; internal set; }
-        public string Path { get; internal set; }
-        public string Description { get; internal set; }
-        public string Author { get; internal set; }
-        public Version Version { get; internal set; }
+        public string Name { get; private set; }
+        public string Title { get; private set; }
+        public string Filename { get; private set; }
+        public string Path { get; private set; }
+        public string Description { get; private set; }
+        public string Author { get; private set; }
+        public Version Version { get; private set; }
         
         public bool IsLoaded { get; internal set; }
-        public bool IsCorePlugin { get; internal set; }
+        public bool IsCorePlugin { get; private set; }
         
         protected internal Dictionary<string, HookMethod> Hooks = PoolNew<Dictionary<string, HookMethod>>.Get();
         protected internal Dictionary<string, Command> Commands = PoolNew<Dictionary<string, Command>>.Get();
         
         #endregion
 
-        internal static bool CreatePlugin(Type type, string path, bool corePlugin = false)
+        internal static bool CreatePlugin(Type type, string path)
         {
             try
             {
-                if (Interface.FindPlugin(path) != null)
+                if (type == null || Interface.FindPlugin(type.Name) != null)
                     return false;
-                
-                if (type == null || !(Activator.CreateInstance(type) is Plugin plugin))
+
+                if (Activator.CreateInstance(type) is Plugin plugin)
                 {
-                    Log.Error($"Failed to load plugin with path: {path}");
-                    return false;
+                    plugin.Initialize(path);
+                    return true;
                 }
 
-                plugin.Path = path;
-                plugin.Filename = string.IsNullOrEmpty(path) ? path : System.IO.Path.GetFileName(path);
-                plugin.IsCorePlugin = corePlugin;
+                Log.Error($"Failed to load plugin with path: {path}");
+                return false;
 
-                Interface.Plugins.Add(plugin);
-                Interface.Load(path);
-                return true;
             }
             catch (Exception e)
             {
@@ -53,14 +52,17 @@ namespace Console.Plugins
             }
         }
 
-        public Plugin()
+        public void Initialize(string path)
         {
             var type = GetType();
 
+            Path = path;
+            Filename = System.IO.Path.GetFileName(path);
             Name = type.Name;
             Title = type.Name;
             Author = "Unknown";
             Version = new Version(1, 0, 0);
+            IsCorePlugin = string.IsNullOrEmpty(Path);
 
             var info = type.GetCustomAttribute<InfoAttribute>();
             if (info != null)
@@ -101,6 +103,9 @@ namespace Console.Plugins
                     }
                 }
             }
+            
+            Interface.Plugins.Add(this);
+            Interface.Load(Name);
         }
         
         #region Hooks

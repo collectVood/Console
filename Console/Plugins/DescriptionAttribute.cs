@@ -7,9 +7,9 @@ namespace Console.Plugins
     {
         public string Description { get; }
 
-        public DescriptionAttribute(string Description)
+        public DescriptionAttribute(string description)
         {
-            this.Description = Description;
+            Description = description;
         }
     }
 }

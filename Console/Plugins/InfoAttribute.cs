@@ -9,25 +9,25 @@ namespace Console.Plugins
         public string Author { get; }
         public Version Version { get; }
 
-        public InfoAttribute(string Title, string Author, Version Version)
+        public InfoAttribute(string title, string author, Version version)
         {
-            this.Title = Title;
-            this.Author = Author;
-            this.Version = Version;
+            Title = title;
+            Author = author;
+            Version = version;
         }
 
-        public InfoAttribute(string Title, string Author, string Version)
+        public InfoAttribute(string title, string author, string version)
         {
             var ver = new Version(1, 0, 0);
-            var inputs = Version.Split('.');
+            var inputs = version.Split('.');
             if (inputs.Length == 3 && int.TryParse(inputs[0], out var v1) && int.TryParse(inputs[1], out var v2) &&
                 int.TryParse(inputs[2], out var v3))
                 ver = new Version(v1, v2, v3);
 
 
-            this.Title = Title;
-            this.Author = Author;
-            this.Version = ver;
+            Title = title;
+            Author = author;
+            Version = ver;
         }
     }
 }

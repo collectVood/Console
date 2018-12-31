@@ -53,7 +53,7 @@ namespace Console
             ConsoleManager.Initialize();
             
             // Loading core plugins
-            Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty, true);
+            Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty);
             
             // Loading other available plugins
             var files = Directory.GetFiles(PluginDirectory);

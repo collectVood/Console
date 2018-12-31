@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Console.Plugins
+namespace Console.Plugins.Hooks
 {
     public class HookMethod
     {

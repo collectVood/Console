@@ -1,15 +1,15 @@
 using System;
 using System.Reflection;
 
-namespace Console.Plugins
+namespace Console.Plugins.Commands
 {
     public class Command
     {
-        public Plugin Owner { get; internal set; }
-        public MethodInfo Method { get; internal set; }
+        public Plugin Owner { get; }
+        public MethodInfo Method { get; }
         
-        public string Name { get; internal set; }
-        public string FullName { get; internal set; }
+        public string Name { get; }
+        public string FullName { get; }
 
         public Command(Plugin plugin, string name, MethodInfo method)
         {

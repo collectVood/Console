@@ -1,4 +1,4 @@
-namespace Console.Plugins
+namespace Console.Plugins.Hooks
 {
     public class HookResult
     {

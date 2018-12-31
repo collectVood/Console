@@ -11,9 +11,15 @@ namespace Console.Plugins
         {
             var entry = PluginsQueueEntry.Find(path);
             if (entry != null)
-                Entries.Remove(entry);
-            
-            Entries.Add(new PluginsQueueEntry(path, action));
+            {
+                entry.Action = action;
+                entry.TimeAdded = Interface.Controller.Now;
+            }
+            else
+            {
+                entry = new PluginsQueueEntry(path, action);
+                Entries.Add(entry);
+            }
         }
         
         internal void Process()
@@ -35,8 +41,8 @@ namespace Console.Plugins
     internal class PluginsQueueEntry
     {
         internal string Path { get; }
-        internal PluginsQueueAction Action { get; }
-        internal double TimeAdded { get; } = Interface.Controller.Now;
+        internal PluginsQueueAction Action { get; set; }
+        internal double TimeAdded { get; set; } = Interface.Controller.Now;
 
         internal PluginsQueueEntry(string path, PluginsQueueAction action)
         {
