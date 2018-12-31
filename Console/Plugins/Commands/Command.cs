@@ -16,15 +16,12 @@ namespace Console.Plugins.Commands
             Owner = plugin;
             Method = method;
             
-            Name = name.ToLower();
+            Name = name;
             FullName = $"{plugin.Name}.{name}".ToLower();
         }
 
-        public void Call(string command)
+        public void Execute(string[] arguments)
         {
-            if (!CanUseCommand(command))
-                return;
-            
             try
             {
                 Method?.Invoke(Owner, null);
@@ -35,6 +32,10 @@ namespace Console.Plugins.Commands
             }
         }
 
-        internal bool CanUseCommand(string parameters) => parameters.Length == 0;
+        public static bool HasMatchingSignature(MethodInfo method)
+        {
+            var parameters = method.GetParameters();
+            return parameters.Length == 1 && parameters[0].ParameterType == typeof(string[]);
+        }
     }
 }

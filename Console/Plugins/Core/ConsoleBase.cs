@@ -8,20 +8,20 @@ namespace Console.Plugins.Core
     [Info("ConsoleBase", "Iv Misticos", "1.0.0")]
     public class ConsoleBase : Plugin
     {
-        [HookMethod("IOnServerInput")]
-        public void IOnServerInput(string input)
+        [HookMethod("IOnInput")]
+        public void IOnInput(string input)
         {
             if (input.StartsWith("/"))
-                Interface.CallHook("IOnServerCommand", input.Substring(1));
+                Interface.CallHook("IOnCommand", input.Substring(1));
+            else
+                Interface.CallHook("OnInput", input);
         }
 
-        [HookMethod("IOnServerCommand")]
-        public void IOnServerCommand(string command)
+        [HookMethod("IOnCommand")]
+        public void IOnCommand(string command)
         {
             Log.Debug($"Called a command {command}");
-            Interface.Call("OnServerCommand", command);
-            
-            // TODO
+            Interface.CallHook("OnCommand", command);
         }
 
         [Command("test")]

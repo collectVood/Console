@@ -39,7 +39,11 @@ namespace Console
             return commands;
         };
 
-        private Action<string> _onInput = s => { Interface.CallHook("IOnServerInput", s); };
+        private Action<string> _onInput = s =>
+        {
+            Log.Input(s);
+            Interface.CallHook("IOnInput", s);
+        };
         
         private double _nextUpdate;
 

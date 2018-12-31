@@ -196,15 +196,41 @@ namespace Console.Plugins
         
         #region Commands
 
+        /// <summary>
+        /// Adds a command to plugin
+        /// </summary>
+        /// <param name="name">Command name</param>
+        /// <param name="method"></param>
         public void AddCommand(string name, MethodInfo method)
         {
+            name = name.ToLower();
             if (Commands.ContainsKey(name))
             {
-                Log.Warning($"Plugin {Title} is trying to register existing command");
+                Log.Warning($"Plugin {Title} tried to register existing command");
                 return;
             }
 
             Commands[name] = new Command(this, name, method);
+        }
+
+        /// <summary>
+        /// Find matching command
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public Command FindCommand(string name)
+        {
+            name = name.ToLower();
+            if (Commands.TryGetValue(name, out var command))
+                return command;
+
+            foreach (var kvp in Commands)
+            {
+                if (kvp.Value.FullName == name)
+                    return kvp.Value;
+            }
+
+            return null;
         }
 
         #endregion

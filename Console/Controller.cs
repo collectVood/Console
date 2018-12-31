@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Console.Plugins;
 using Console.Plugins.Core;
 
@@ -19,6 +20,7 @@ namespace Console
         private Func<double> TimeSinceStartup { get; }
         private string RootDirectory { get; }
         private string PluginDirectory { get; }
+        internal string LogDirectory { get; }
 
         public double Now => TimeSinceStartup();
 
@@ -28,9 +30,24 @@ namespace Console
             
             RootDirectory = Environment.CurrentDirectory;
             PluginDirectory = Path.Combine(RootDirectory, "plugins");
+            LogDirectory = Path.Combine(RootDirectory, "logs");
 
             if (!Directory.Exists(PluginDirectory))
                 Directory.CreateDirectory(PluginDirectory);
+            if (!Directory.Exists(LogDirectory))
+                Directory.CreateDirectory(LogDirectory);
+            
+            // Logging exceptions
+//            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                Log.Exception((Exception) eventArgs.ExceptionObject);
+                Log.Warning("Fatal error! Exit in 5 sec.");
+                
+                System.Console.Beep(1000, 1000);
+                Thread.Sleep(5000);
+                Environment.Exit(0);
+            };
             
             // File System Watchers
             FSWatcherPlugins = new FileSystemWatcher(PluginDirectory, "*.dll");
@@ -51,10 +68,10 @@ namespace Console
             // Initializing console
             ConsoleManager = new ConsoleManager();
             ConsoleManager.Initialize();
-            
+
             // Loading core plugins
             Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty);
-            
+
             // Loading other available plugins
             var files = Directory.GetFiles(PluginDirectory);
             for (var i = 0; i < files.Length; i++)
