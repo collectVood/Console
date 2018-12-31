@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using Console.Plugins;
 using Console.Plugins.Core;
+using Version = Console.Plugins.Version;
 
 namespace Console
 {
@@ -23,6 +25,8 @@ namespace Console
         internal string LogDirectory { get; }
 
         public double Now => TimeSinceStartup();
+        
+        public Version Version { get; }
 
         public Controller()
         {
@@ -38,7 +42,6 @@ namespace Console
                 Directory.CreateDirectory(LogDirectory);
             
             // Logging exceptions
-//            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
             {
                 Log.Exception((Exception) eventArgs.ExceptionObject);
@@ -60,6 +63,10 @@ namespace Console
             FSWatcherPlugins.EnableRaisingEvents = true;
             GC.KeepAlive(FSWatcherPlugins);
             
+            // Version setup
+            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            Version = new Version(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build);
+            
             // Time since startup
             var timer = new Stopwatch();
             timer.Start();
@@ -70,7 +77,7 @@ namespace Console
             ConsoleManager.Initialize();
 
             // Loading core plugins
-            Plugin.CreatePlugin(typeof(ConsoleBase), string.Empty);
+            Plugin.CreatePlugin(typeof(Plugins.Core.Core), string.Empty);
 
             // Loading other available plugins
             var files = Directory.GetFiles(PluginDirectory);

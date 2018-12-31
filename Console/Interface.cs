@@ -141,7 +141,7 @@ namespace Console
             
             plugin.IsLoaded = false;
             Log.Info($"Unloaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
-            return true;
+            return true;    
         }
 
         public static Plugin FindPlugin(string name)

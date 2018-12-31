@@ -5,8 +5,8 @@ using Console.Plugins.Hooks;
 
 namespace Console.Plugins.Core
 {
-    [Info("ConsoleBase", "Iv Misticos", "1.0.0")]
-    public class ConsoleBase : Plugin
+    [Info("Core", "Iv Misticos", "1.0.0")]
+    public class Core : Plugin
     {
         [HookMethod("IOnInput")]
         public void IOnInput(string input)
@@ -34,8 +34,15 @@ namespace Console.Plugins.Core
         public void CommandTest(string[] args)
         {
             var arguments = args.Length == 0 ? "Nothing" : string.Join(" ", args);
-            Log.Debug("TEST CALLED");
             Log.Debug($"Arguments: {arguments}");
+        }
+
+        [Command("version")]
+        public void CommandVersion(string[] args)
+        {
+            Log.Info("Version Info:\n" +
+                     $"Console: {Interface.Controller.Version}\n" +
+                     $"Core: {Version}");
         }
     }
 }

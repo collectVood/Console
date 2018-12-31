@@ -46,7 +46,7 @@
     <Compile Include="Plugins\Commands\Command.cs" />
     <Compile Include="Plugins\Commands\CommandArgument.cs" />
     <Compile Include="Plugins\Commands\CommandAttribute.cs" />
-    <Compile Include="Plugins\Core\ConsoleBase.cs" />
+    <Compile Include="Plugins\Core\Core.cs" />
     <Compile Include="Plugins\DescriptionAttribute.cs" />
     <Compile Include="Plugins\Hooks\HookMethod.cs" />
     <Compile Include="Plugins\Hooks\HookMethodAttribute.cs" />
