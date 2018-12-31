@@ -33,7 +33,6 @@ namespace Console.Plugins.Commands
                 return this;
 
             var spaceIndex = entry.IndexOf(' ');
-            Log.Debug($"Spaceindex: {spaceIndex}");
             var command = spaceIndex == -1 ? entry : entry.Substring(0, spaceIndex);
 
             for (var i = 0; i < Interface.Plugins.Count; i++)
