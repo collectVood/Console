@@ -112,6 +112,7 @@ namespace Console
                 var type = assembly.GetType("Console.Plugins." + Path.GetFileNameWithoutExtension(path));
 
                 Plugin.CreatePlugin(type, path);
+                UpdateDependencies();
             }
             catch (IOException)
             {
@@ -131,6 +132,7 @@ namespace Console
 
             Unload(plugin.Name);
             Plugins.Remove(plugin);
+            UpdateDependencies();
         }
 
         public static bool Load(string name)
@@ -141,6 +143,8 @@ namespace Console
             
             plugin.IsLoaded = true;
             Log.Info($"Loaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
+            
+            UpdateDependencies();
             return true;
         }
 
@@ -155,24 +159,24 @@ namespace Console
             return true;    
         }
 
-        public static Plugin FindPlugin(string name)
+        public static Plugin FindPlugin(string name, bool loaded = false)
         {
             for (var i = 0; i < Plugins.Count; i++)
             {
                 var plugin = Plugins[i];
-                if (plugin.Name == name && plugin.IsLoaded)
+                if (plugin.Name == name && (!loaded || plugin.IsLoaded))
                     return plugin;
             }
 
             return null;
         }
 
-        public static Plugin FindPluginByPath(string path)
+        public static Plugin FindPluginByPath(string path, bool loaded = false)
         {
             for (var i = 0; i < Plugins.Count; i++)
             {
                 var plugin = Plugins[i];
-                if (plugin.Path == path && plugin.IsLoaded)
+                if (plugin.Path == path && (!loaded || plugin.IsLoaded))
                     return plugin;
             }
 

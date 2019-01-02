@@ -16,6 +16,7 @@ namespace Console
         public static ConsoleManager ConsoleManager { get; private set; }
         
         private FileSystemWatcher FSWatcherPlugins { get; }
+        public DataFileSystem DataFileSystem { get; private set; }
 
         private List<Action> _nextTickQueue = new List<Action>();
         
@@ -48,6 +49,8 @@ namespace Console
                 Directory.CreateDirectory(DataDirectory);
             if (!Directory.Exists(DataTemporaryDirectory))
                 Directory.CreateDirectory(DataTemporaryDirectory);
+            
+            DataFileSystem = new DataFileSystem(DataDirectory);
             
             // Logging exceptions
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
@@ -83,10 +86,10 @@ namespace Console
             // Initializing console
             ConsoleManager = new ConsoleManager();
             ConsoleManager.Initialize();
-
+            
             // Loading core plugins
             Plugin.CreatePlugin(typeof(Core), string.Empty);
-
+            
             // Loading other available plugins
             var files = Directory.GetFiles(PluginDirectory);
             for (var i = 0; i < files.Length; i++)
