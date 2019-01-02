@@ -20,9 +20,11 @@ namespace Console
         private List<Action> _nextTickQueue = new List<Action>();
         
         private Func<double> TimeSinceStartup { get; }
-        private string RootDirectory { get; }
-        private string PluginDirectory { get; }
-        internal string LogDirectory { get; }
+        public string RootDirectory { get; }
+        public string PluginDirectory { get; }
+        public string LogDirectory { get; }
+        public string DataDirectory { get; }
+        public string DataTemporaryDirectory { get; }
 
         public double Now => TimeSinceStartup();
         
@@ -35,11 +37,17 @@ namespace Console
             RootDirectory = Environment.CurrentDirectory;
             PluginDirectory = Path.Combine(RootDirectory, "plugins");
             LogDirectory = Path.Combine(RootDirectory, "logs");
+            DataDirectory = Path.Combine(RootDirectory, "data");
+            DataTemporaryDirectory = Path.Combine(DataDirectory, "Temporary");
 
             if (!Directory.Exists(PluginDirectory))
                 Directory.CreateDirectory(PluginDirectory);
             if (!Directory.Exists(LogDirectory))
                 Directory.CreateDirectory(LogDirectory);
+            if (!Directory.Exists(DataDirectory))
+                Directory.CreateDirectory(DataDirectory);
+            if (!Directory.Exists(DataTemporaryDirectory))
+                Directory.CreateDirectory(DataTemporaryDirectory);
             
             // Logging exceptions
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
@@ -77,7 +85,7 @@ namespace Console
             ConsoleManager.Initialize();
 
             // Loading core plugins
-            Plugin.CreatePlugin(typeof(Plugins.Core.Core), string.Empty);
+            Plugin.CreatePlugin(typeof(Core), string.Empty);
 
             // Loading other available plugins
             var files = Directory.GetFiles(PluginDirectory);

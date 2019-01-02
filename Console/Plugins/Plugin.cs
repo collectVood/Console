@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Console.Plugins.Commands;
+using Console.Plugins.Dependencies;
 using Console.Plugins.Hooks;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -23,8 +24,9 @@ namespace Console.Plugins
         public bool IsLoaded { get; internal set; }
         public bool IsCorePlugin { get; private set; }
         
-        protected internal Dictionary<string, HookMethod> Hooks = PoolNew<Dictionary<string, HookMethod>>.Get();
-        protected internal Dictionary<string, Command> Commands = PoolNew<Dictionary<string, Command>>.Get();
+        protected internal Dictionary<string, HookMethod> Hooks { get; }= PoolNew<Dictionary<string, HookMethod>>.Get();
+        protected internal Dictionary<string, Command> Commands { get; }= PoolNew<Dictionary<string, Command>>.Get();
+        protected internal List<Dependency> Dependencies { get; }= PoolNew<List<Dependency>>.Get();
         
         #endregion
 
@@ -84,14 +86,14 @@ namespace Console.Plugins
                 typeList.Add(type = type?.BaseType);
 
             var typeCount = typeList.Count;
-            for (var i1 = 0; i1 < typeCount; i1++)
+            for (var i = 0; i < typeCount; i++)
             {
-                type = typeList[i1];
+                type = typeList[i];
                 var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 var methodsCount = methods.Length;
-                for (var i2 = 0; i2 < methodsCount; i2++)
+                for (var j = 0; j < methodsCount; j++)
                 {
-                    var method = methods[i2];
+                    var method = methods[j];
                     if (method.GetCustomAttribute<HookMethodAttribute>(false) is HookMethodAttribute hookMethodAttribute)
                     {
                         AddHookMethod(hookMethodAttribute.Name, method);
@@ -102,11 +104,55 @@ namespace Console.Plugins
                         AddCommand(commandAttribute.Name, method);
                     }
                 }
+
+                var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var fieldsCount = fields.Length;
+                for (var j = 0; j < fieldsCount; j++)
+                {
+                    var field = fields[j];
+                    if (field.GetCustomAttribute<DependencyAttribute>(false) is DependencyAttribute dependencyAttribute)
+                    {
+                        AddDependency(dependencyAttribute.Name, field);
+                    }
+                }
             }
+            
+            UpdateDependencies();
             
             Interface.Plugins.Add(this);
             Interface.Load(Name);
         }
+        
+        #region Dependencies
+
+        /// <summary>
+        /// Adds a dependency
+        /// </summary>
+        /// <param name="name">Dependency (plugin) name</param>
+        /// <param name="field"></param>
+        public void AddDependency(string name, FieldInfo field)
+        {
+            if (!Dependency.HasMatchingSignature(field))
+            {
+                Log.Warning($"Plugin {Title} tried to register dependency for an incorrect field");
+                return;
+            }
+            
+            Dependencies.Add(new Dependency(this, name, field));
+        }
+
+        /// <summary>
+        /// Update all dependencies (find all dependencies)
+        /// </summary>
+        public void UpdateDependencies()
+        {
+            for (var i = 0; i < Dependencies.Count; i++)
+            {
+                Dependencies[i].Update();
+            }
+        }
+        
+        #endregion
         
         #region Hooks
 

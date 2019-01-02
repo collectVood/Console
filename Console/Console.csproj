@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -40,6 +44,7 @@
   <ItemGroup>
     <Compile Include="ConsoleManager.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="DataFileSystem.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Interface.cs" />
     <Compile Include="Log.cs" />
@@ -47,6 +52,8 @@
     <Compile Include="Plugins\Commands\CommandArgument.cs" />
     <Compile Include="Plugins\Commands\CommandAttribute.cs" />
     <Compile Include="Plugins\Core\Core.cs" />
+    <Compile Include="Plugins\Dependencies\Dependency.cs" />
+    <Compile Include="Plugins\Dependencies\DependencyAttribute.cs" />
     <Compile Include="Plugins\DescriptionAttribute.cs" />
     <Compile Include="Plugins\Hooks\HookMethod.cs" />
     <Compile Include="Plugins\Hooks\HookMethodAttribute.cs" />
@@ -58,6 +65,9 @@
     <Compile Include="Pool.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

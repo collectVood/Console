@@ -12,7 +12,7 @@ namespace Console
     {
         #region Variables
         
-        public static Controller Controller = Controller.Instance;
+        public static Controller Controller { get; } = Controller.Instance;
         public static List<Plugin> Plugins { get; } = PoolNew<List<Plugin>>.Get();
         internal static PluginsQueue PluginsQueue = new PluginsQueue();
         
@@ -92,6 +92,17 @@ namespace Console
         public static void CallHook(string name, params object[] args) => Call(name, args);
         
         #endregion
+        
+        #region Dependencies
+
+        public static void UpdateDependencies()
+        {
+            Plugins.ForEach(x => x.UpdateDependencies());
+        }
+        
+        #endregion
+        
+        #region Plugins
 
         internal static void LoadAssembly(string path)
         {
@@ -149,7 +160,7 @@ namespace Console
             for (var i = 0; i < Plugins.Count; i++)
             {
                 var plugin = Plugins[i];
-                if (plugin.Name == name)
+                if (plugin.Name == name && plugin.IsLoaded)
                     return plugin;
             }
 
@@ -161,11 +172,13 @@ namespace Console
             for (var i = 0; i < Plugins.Count; i++)
             {
                 var plugin = Plugins[i];
-                if (plugin.Path == path)
+                if (plugin.Path == path && plugin.IsLoaded)
                     return plugin;
             }
 
             return null;
         }
+        
+        #endregion
     }
 }
