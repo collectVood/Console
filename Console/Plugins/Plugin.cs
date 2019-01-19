@@ -24,9 +24,9 @@ namespace Console.Plugins
         public bool IsLoaded { get; internal set; }
         public bool IsCorePlugin { get; private set; }
         
-        protected internal Dictionary<string, HookMethod> Hooks { get; }= PoolNew<Dictionary<string, HookMethod>>.Get();
-        protected internal Dictionary<string, Command> Commands { get; }= PoolNew<Dictionary<string, Command>>.Get();
-        protected internal List<Dependency> Dependencies { get; }= PoolNew<List<Dependency>>.Get();
+        protected internal Dictionary<string, HookMethod> Hooks { get; } = PoolNew<Dictionary<string, HookMethod>>.Get();
+        protected internal Dictionary<string, Command> Commands { get; } = PoolNew<Dictionary<string, Command>>.Get();
+        protected internal List<Dependency> Dependencies { get; } = PoolNew<List<Dependency>>.Get();
         
         #endregion
 
@@ -151,6 +151,8 @@ namespace Console.Plugins
                 Dependencies[i].Update();
             }
         }
+
+        public List<Dependency> GetDependencies() => Dependencies;
         
         #endregion
         

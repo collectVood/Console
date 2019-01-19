@@ -145,6 +145,8 @@ namespace Console
             Log.Info($"Loaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
             
             UpdateDependencies();
+            plugin.Call("Loaded");
+            CallHook("OnPluginLoaded", plugin);
             return true;
         }
 
@@ -156,6 +158,10 @@ namespace Console
             
             plugin.IsLoaded = false;
             Log.Info($"Unloaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
+            
+            UpdateDependencies();
+            plugin.Call("Unloaded");
+            CallHook("OnPluginUnloaded", plugin);
             return true;    
         }
 

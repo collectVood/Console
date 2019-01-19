@@ -61,6 +61,7 @@
     <Compile Include="Plugins\InfoAttribute.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginsQueue.cs" />
+    <Compile Include="Plugins\Timers\Timer.cs" />
     <Compile Include="Plugins\Version.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="Program.cs" />

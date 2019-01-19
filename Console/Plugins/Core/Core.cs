@@ -30,13 +30,6 @@ namespace Console.Plugins.Core
             Interface.CallHook("OnCommand", arg);
         }
 
-        [Command("test")]
-        public void CommandTest(string[] args)
-        {
-            var arguments = args.Length == 0 ? "Nothing" : string.Join(" ", args);
-            Log.Debug($"Arguments: {arguments}");
-        }
-
         [Command("version")]
         public void CommandVersion(string[] args)
         {

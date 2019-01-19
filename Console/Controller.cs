@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using Console.Plugins;
 using Console.Plugins.Core;
+using Timer = Console.Plugins.Timers.Timer;
 using Version = Console.Plugins.Version;
 
 namespace Console
@@ -34,6 +35,11 @@ namespace Console
         public Controller()
         {
             Instance = this;
+            
+            // Time since startup
+            var timer = new Stopwatch();
+            timer.Start();
+            TimeSinceStartup = () => timer.Elapsed.TotalSeconds;
             
             RootDirectory = Environment.CurrentDirectory;
             PluginDirectory = Path.Combine(RootDirectory, "plugins");
@@ -78,11 +84,6 @@ namespace Console
             var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
             Version = new Version(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build);
             
-            // Time since startup
-            var timer = new Stopwatch();
-            timer.Start();
-            TimeSinceStartup = () => timer.Elapsed.TotalSeconds;
-            
             // Initializing console
             ConsoleManager = new ConsoleManager();
             ConsoleManager.Initialize();
@@ -100,6 +101,8 @@ namespace Console
                     Interface.LoadAssembly(path);
                 }
             }
+            
+            Interface.CallHook("OnInitialized");
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Global
@@ -120,6 +123,7 @@ namespace Console
             _nextTickQueue.Clear();
             
             Interface.PluginsQueue.Process();
+            Timer.Update();
 
             ConsoleManager.Update();
             Interface.CallHook("OnFrame");
