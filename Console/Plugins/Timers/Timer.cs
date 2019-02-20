@@ -51,9 +51,8 @@ namespace Console.Plugins.Timers
         
         private static List<Timer> _timers = PoolNew<List<Timer>>.Get();
         
-        internal static void Update()
+        internal static void Process()
         {
-            var now = Interface.Controller.Now;
             for (var i = _timers.Count - 1; i >= 0; i--)
             {
                 var timer = _timers[i];

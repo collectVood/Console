@@ -123,7 +123,7 @@ namespace Console
             _nextTickQueue.Clear();
             
             Interface.PluginsQueue.Process();
-            Timer.Update();
+            Timer.Process();
 
             ConsoleManager.Update();
             Interface.CallHook("OnFrame");
