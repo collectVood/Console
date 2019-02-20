@@ -41,7 +41,7 @@ namespace Console.Plugins.Network
             }).Start();
         }
 
-        public string ReceiveMessage()
+        private string ReceiveMessage()
         {
             if (!IsConnected)
                 return null;
