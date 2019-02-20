@@ -90,6 +90,7 @@ namespace Console
             
             // Loading core plugins
             Plugin.CreatePlugin(typeof(Core), string.Empty);
+            Plugin.CreatePlugin(typeof(Chat), string.Empty);
             
             // Loading other available plugins
             var files = Directory.GetFiles(PluginDirectory);
