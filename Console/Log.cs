@@ -5,6 +5,8 @@ namespace Console
 {
     public static class Log
     {
+        private static object _lock = new object();
+        
         internal const ConsoleColor ColorDefault = ConsoleColor.Gray;
         internal const ConsoleColor ColorWarning = ConsoleColor.Yellow;
         internal const ConsoleColor ColorError = ConsoleColor.Red;
@@ -132,17 +134,20 @@ namespace Console
         {
             try
             {
-                var file = new FileInfo(path);
-                var directory = file.Directory;
-                if (directory == null)
-                    return;
-                
-                if (!directory.Exists)
-                    Directory.CreateDirectory(directory.FullName);
-
-                using (var writer = new StreamWriter(path, true))
+                lock (_lock)
                 {
-                    writer.WriteLine(text);
+                    var file = new FileInfo(path);
+                    var directory = file.Directory;
+                    if (directory == null)
+                        return;
+
+                    if (!directory.Exists)
+                        Directory.CreateDirectory(directory.FullName);
+
+                    using (var writer = new StreamWriter(path, true))
+                    {
+                        writer.WriteLine(text);
+                    }
                 }
             }
             catch (Exception)
