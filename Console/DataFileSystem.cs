@@ -6,6 +6,8 @@ namespace Console
 {
     public class DataFileSystem
     {
+        private static object _lock = new object();
+        
         public string Directory { get; }
 
         public DataFileSystem(string directory)
@@ -15,36 +17,54 @@ namespace Console
 
         public T ReadObject<T>(string filename)
         {
-            var path = Path.Combine(Directory, filename);
-            return Exists(path)
-                ? JsonConvert.DeserializeObject<T>(File.ReadAllText(path))
-                : Activator.CreateInstance<T>();
+            lock (_lock)
+            {
+                var path = Path.Combine(Directory, filename);
+                return Exists(path)
+                    ? JsonConvert.DeserializeObject<T>(File.ReadAllText(path))
+                    : Activator.CreateInstance<T>();
+            }
         }
 
         public void WriteObject<T>(T obj, string filename)
         {
-            var path = Path.Combine(Directory, filename);
-            Exists(path, true);
+            lock (_lock)
+            {
+                var path = Path.Combine(Directory, filename);
+                Exists(path, true);
 
-            var text = JsonConvert.SerializeObject(obj, Formatting.Indented);
-            File.WriteAllText(path, text);
+                var text = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                File.WriteAllText(path, text);
+            }
         }
 
         public static bool Exists(string path, bool create = false)
         {
-            var file = new FileInfo(path);
-            var dir = file.Directory;
+            lock (_lock)
+            {
+                if (string.IsNullOrEmpty(path))
+                    return false;
 
-            if (!create) return dir != null && dir.Exists && file.Exists;
-            
-            if (dir != null && !dir.Exists)
-                System.IO.Directory.CreateDirectory(dir.FullName);
-            
-            if (!file.Exists)
-                File.Create(path);
+                var directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(directory) && !System.IO.Directory.Exists(directory))
+                {
+                    if (create)
+                        System.IO.Directory.CreateDirectory(directory);
+                    else
+                        return false;
+                }
 
-            return true;
+                // ReSharper disable once InvertIf
+                if (!File.Exists(path))
+                {
+                    if (create)
+                        File.Create(path).Close();
+                    else
+                        return false;
+                }
 
+                return true;
+            }
         }
     }
 }
