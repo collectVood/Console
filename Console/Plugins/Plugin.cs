@@ -45,7 +45,6 @@ namespace Console.Plugins
 
                 Log.Error($"Failed to load plugin with path: {path}");
                 return false;
-
             }
             catch (Exception e)
             {

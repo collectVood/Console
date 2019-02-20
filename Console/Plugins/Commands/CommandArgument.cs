@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Console.Plugins.Commands
 {
     public class CommandArgument
@@ -6,7 +8,12 @@ namespace Console.Plugins.Commands
 
         public Command Command { get; private set; }
         public string[] Args { get; private set; }
+
+        public string Arguments => string.Join(" ", Args);
+        
         public bool IsValid => Command != null && Command.Owner.IsLoaded;
+        
+        public List<string> Replies { get; } = PoolNew<List<string>>.Get();
 
         #endregion
 
@@ -15,8 +22,18 @@ namespace Console.Plugins.Commands
             if (!IsValid)
                 return false;
             
-            Command.Execute(Args);
+            Command.Execute(this);
+            for (var i = 0; i < Replies.Count; i++)
+            {
+                Log.Info(Replies[0]);
+            }
+            
             return true;
+        }
+
+        public void Reply(string message)
+        {
+            Replies.Add(message);
         }
         
         #region Building

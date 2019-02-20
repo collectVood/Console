@@ -5,7 +5,7 @@
         public static void Main(string[] args)
         {
             var controller = new Controller();
-
+            
             while (true)
             {
                 controller.OnFrame();

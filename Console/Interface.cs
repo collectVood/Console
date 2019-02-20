@@ -140,7 +140,7 @@ namespace Console
             var plugin = FindPlugin(name);
             if (plugin == null)
                 return false;
-            
+
             plugin.IsLoaded = true;
             Log.Info($"Loaded plugin {plugin.Title} v{plugin.Version} by {plugin.Author}");
             

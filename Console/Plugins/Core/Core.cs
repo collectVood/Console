@@ -21,19 +21,17 @@ namespace Console.Plugins.Core
         public void IOnCommand(string entry)
         {
             var arg = CommandArgument.Build(entry);
-            if (!arg.Execute())
-            {
-                Log.Info("Couldn't execute latest command");
+            var result = Interface.Call("CanExecuteCommand", arg);
+            if (result is bool && result.Equals(false) || !arg.Execute())
                 return;
-            }
             
             Interface.CallHook("OnCommand", arg);
         }
 
         [Command("version")]
-        public void CommandVersion(string[] args)
+        public void CommandVersion(CommandArgument arg)
         {
-            Log.Info("Version Info:\n" +
+            arg.Reply("Version Info:\n" +
                      $"Console: {Interface.Controller.Version}\n" +
                      $"Core: {Version}");
         }

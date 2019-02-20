@@ -20,11 +20,11 @@ namespace Console.Plugins.Commands
             FullName = $"{plugin.Name}.{name}".ToLower();
         }
 
-        public void Execute(string[] arguments)
+        public void Execute(CommandArgument arg)
         {
             try
             {
-                Method?.Invoke(Owner, new object[] {arguments});
+                Method?.Invoke(Owner, new object[] {arg});
             }
             catch (Exception e)
             {
@@ -35,7 +35,7 @@ namespace Console.Plugins.Commands
         public static bool HasMatchingSignature(MethodInfo method)
         {
             var parameters = method.GetParameters();
-            return parameters.Length == 1 && parameters[0].ParameterType == typeof(string[]);
+            return parameters.Length == 1 && parameters[0].ParameterType == typeof(CommandArgument);
         }
     }
 }

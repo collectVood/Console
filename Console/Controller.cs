@@ -62,7 +62,7 @@ namespace Console
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
             {
                 Log.Exception((Exception) eventArgs.ExceptionObject);
-                Log.Warning("Fatal error! Exit in 5 sec.");
+                Log.Error("Fatal error! Exit in 5 sec.");
                 
                 System.Console.Beep(1000, 1000);
                 Thread.Sleep(5000);
@@ -128,7 +128,7 @@ namespace Console
             ConsoleManager.Update();
             Interface.CallHook("OnFrame");
         }
-        
+
         #region File System Events
 
         private void OnFileCreated(object sender, FileSystemEventArgs args)
