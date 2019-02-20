@@ -9,7 +9,7 @@ namespace Console.Plugins.Commands
         public Command Command { get; private set; }
         public string[] Args { get; private set; }
 
-        public string Arguments => string.Join(" ", Args);
+        public string Arguments => Args.Length == 0 ? string.Empty : string.Join(" ", Args);
         
         public bool IsValid => Command != null && Command.Owner.IsLoaded;
         
