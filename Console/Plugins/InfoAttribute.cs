@@ -5,9 +5,9 @@ namespace Console.Plugins
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class InfoAttribute : Attribute
     {
-        public string Title { get; }
-        public string Author { get; }
-        public Version Version { get; }
+        internal string Title { get; }
+        internal string Author { get; }
+        internal Version Version { get; }
 
         public InfoAttribute(string title, string author, Version version)
         {

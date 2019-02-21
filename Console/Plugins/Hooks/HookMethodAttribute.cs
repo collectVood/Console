@@ -5,7 +5,7 @@ namespace Console.Plugins.Hooks
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public class HookMethodAttribute : Attribute
     {
-        public string Name;
+        internal string Name;
 
         public HookMethodAttribute(string name)
         {
