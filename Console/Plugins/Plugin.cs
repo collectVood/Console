@@ -53,7 +53,7 @@ namespace Console.Plugins
             }
         }
 
-        public void Initialize(string path)
+        internal void Initialize(string path)
         {
             var type = GetType();
 
@@ -133,7 +133,7 @@ namespace Console.Plugins
         {
             if (!Dependency.HasMatchingSignature(field))
             {
-                Log.Warning($"Plugin {Title} tried to register dependency for an incorrect field");
+                Log.Warning($"Plugin {Title} tried to register a dependency for an incorrect field");
                 return;
             }
             
@@ -203,7 +203,7 @@ namespace Console.Plugins
         {
             if (Hooks.ContainsKey(name))
             {
-                Log.Warning($"Plugin {Title} tried to register existing hook");
+                Log.Warning($"Plugin {Title} tried to register an existing hook");
                 return;
             }
             
@@ -253,13 +253,13 @@ namespace Console.Plugins
             name = name.ToLower();
             if (Commands.ContainsKey(name))
             {
-                Log.Warning($"Plugin {Title} tried to register existing command");
+                Log.Warning($"Plugin {Title} tried to register an existing command");
                 return;
             }
 
             if (!Command.HasMatchingSignature(method))
             {
-                Log.Warning($"Plugin {Title} tried to register command with incorrect method arguments");
+                Log.Warning($"Plugin {Title} tried to register a command with incorrect method arguments");
                 return;
             }
 

@@ -15,6 +15,8 @@ namespace Console.Plugins.Commands
         {
             Owner = plugin;
             Method = method;
+
+            name = name.ToLower();
             
             Name = name;
             FullName = $"{plugin.Name}.{name}".ToLower();

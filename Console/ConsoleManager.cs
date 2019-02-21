@@ -18,12 +18,20 @@ namespace Console
         private int _completionIndex;
         private Func<string, string[]> _completion = s =>
         {
-            if (s.StartsWith("/"))
-                s = s.Remove(0, 1);
+            // I'll rewrite this thing later maybe
             
+            var data = new string[0];
+            if (s.StartsWith("/"))
+            {
+                s = s.Remove(0, 1);
+            }
+            else
+            {
+                return data;
+            }
+
             var pluginsCount = Interface.Plugins.Count;
-            var commands = new string[0];
-            var currentCommand = 0;
+            var currentIndex = 0;
             for (var i = 0; i < pluginsCount; i++)
             {
                 var plugin = Interface.Plugins[i];
@@ -31,17 +39,26 @@ namespace Console
                 {
                     if (!kvp.Key.StartsWith(s) && !kvp.Value.FullName.StartsWith(s)) continue;
                     
-                    Array.Resize(ref commands, commands.Length + 1);
-                    commands[currentCommand++] = $"/{kvp.Value.FullName}";
+                    Array.Resize(ref data, data.Length + 1);
+                    data[currentIndex++] = $"/{kvp.Value.FullName}";
                 }
             }
 
-            return commands;
+            return data;
         };
 
         private Action<string> _onInput = s =>
         {
-            Log.Input(s);
+            var result = Interface.Call("ICanInput");
+            if (result is bool b1 && !b1)
+                return;
+            
+            result = Interface.Call("ICanLogInput");
+            if (result is bool b2 && !b2)
+            {
+                Log.Input(s);
+            }
+
             Interface.CallHook("IOnInput", s);
         };
         

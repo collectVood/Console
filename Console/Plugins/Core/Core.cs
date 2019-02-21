@@ -16,6 +16,18 @@ namespace Console.Plugins.Core
             else
                 Interface.CallHook("OnInput", input);
         }
+        
+        [HookMethod("ICanLogInput")]
+        public object ICanLogInput(string input)
+        {
+            return Interface.Call("CanLogInput", input);
+        }
+        
+        [HookMethod("ICanInput")]
+        public object ICanInput(string input)
+        {
+            return Interface.Call("CanInput", input);
+        }
 
         [HookMethod("IOnCommand")]
         public void IOnCommand(string entry)
