@@ -2,6 +2,7 @@
 
 using System.Net;
 using Console.Plugins.Commands;
+using Console.Plugins.Hooks;
 using Console.Plugins.Network;
 using Console.Plugins.Network.Server;
 using Client = Console.Plugins.Network.Client.Client;
@@ -15,6 +16,20 @@ namespace Console.Plugins.Core
         
         private Client _client;
         private BaseServer _server;
+        
+        #endregion
+        
+        #region Hooks
+
+        [HookMethod("CanInput")]
+        public object CanInput(string entry)
+        {
+            if (entry.StartsWith("/") || _client?.IsConnected != true)
+                return null;
+            
+            _client.SendMessage(entry);
+            return false;
+        }
         
         #endregion
         
