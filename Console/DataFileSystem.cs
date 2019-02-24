@@ -26,11 +26,11 @@ namespace Console
             }
         }
 
-        public void WriteObject<T>(T obj, string filename)
+        public void WriteObject<T>(T obj, string path)
         {
             lock (_lock)
             {
-                var path = Path.Combine(Directory, filename);
+                path = Path.Combine(Directory, path);
                 Exists(path, true);
 
                 var text = JsonConvert.SerializeObject(obj, Formatting.Indented);

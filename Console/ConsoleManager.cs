@@ -49,11 +49,11 @@ namespace Console
 
         private Action<string> _onInput = s =>
         {
-            var result = Interface.Call("ICanInput");
+            var result = Interface.Call("ICanInput", s);
             if (result is bool b1 && !b1)
                 return;
             
-            result = Interface.Call("ICanLogInput");
+            result = Interface.Call("ICanLogInput", s);
             if (result is bool b2 && !b2)
             {
                 Log.Input(s);
