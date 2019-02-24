@@ -59,7 +59,7 @@ namespace Console.Plugins.Network
                     // ignored
                 }
 
-            } while (Stream.DataAvailable);
+            } while (IsConnected && Stream.DataAvailable);
 
             var reply = Builder.ToString();
             Builder = Builder.Clear();

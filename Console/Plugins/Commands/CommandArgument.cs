@@ -25,7 +25,7 @@ namespace Console.Plugins.Commands
             Command.Execute(this);
             for (var i = 0; i < Replies.Count; i++)
             {
-                Log.Info(Replies[0]);
+                Log.Info(Replies[i]);
             }
             
             return true;
