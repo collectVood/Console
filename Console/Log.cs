@@ -65,14 +65,15 @@ namespace Console
             LogFile($"{LogPathException}/{LogFileName}", input);
             Controller.ConsoleManager.AddMessage(input, ColorException);
         }
-        
+
         /// <summary>
         /// Prints debug text to console
         /// </summary>
         /// <param name="input"></param>
-        public static void Debug(string input)
+        /// <param name="level">Debug level</param>
+        public static void Debug(string input, int level = 1)
         {
-            if (string.IsNullOrEmpty(input)) return;
+            if (string.IsNullOrEmpty(input) || Interface.Controller.DebugLevel < level) return;
             input = $"[DEBUG] {input}";
             
             LogFile($"{LogPathAll}/{LogFileName}", input);

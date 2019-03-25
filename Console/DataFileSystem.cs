@@ -19,7 +19,7 @@ namespace Console
         {
             lock (_lock)
             {
-                var path = Path.Combine(Directory, filename);
+                var path = Path.Combine(Directory, filename) + ".json";
                 return Exists(path)
                     ? JsonConvert.DeserializeObject<T>(File.ReadAllText(path))
                     : Activator.CreateInstance<T>();
@@ -30,7 +30,7 @@ namespace Console
         {
             lock (_lock)
             {
-                path = Path.Combine(Directory, path);
+                path = Path.Combine(Directory, path) + ".json";
                 Exists(path, true);
 
                 var text = JsonConvert.SerializeObject(obj, Formatting.Indented);

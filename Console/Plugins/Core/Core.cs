@@ -47,5 +47,55 @@ namespace Console.Plugins.Core
                      $"Console: {Interface.Controller.Version}\n" +
                      $"Core: {Version}");
         }
+
+        [Command("load")]
+        public void CommandLoad(CommandArgument arg)
+        {
+            if (arg.Args.Length != 1)
+            {
+                arg.Reply("Please, use \"core.load Name\"");
+                return;
+            }
+
+            Interface.Load(arg.Args[0]);
+        }
+
+        [Command("unload")]
+        public void CommandUnload(CommandArgument arg)
+        {
+            if (arg.Args.Length != 1)
+            {
+                arg.Reply("Please, use \"core.unload Name\"");
+                return;
+            }
+
+            Interface.Unload(arg.Args[0]);
+        }
+
+        [Command("reload")]
+        public void CommandReload(CommandArgument arg)
+        {
+            if (arg.Args.Length != 1)
+            {
+                arg.Reply("Please, use \"core.reload Name\"");
+                return;
+            }
+
+            Interface.Unload(arg.Args[0]);
+            Interface.Load(arg.Args[0]);
+        }
+
+        [Command("setdebug")]
+        public void CommandSetDebug(CommandArgument arg)
+        {
+            if (arg.Args.Length != 1 || !int.TryParse(arg.Args[0], out var level))
+            {
+                arg.Reply("Please, use \"core.setdebug N\"");
+                return;
+            }
+
+            Interface.Controller.DebugLevel = level;
+            arg.Reply($"Done. Current debug level: {level}");
+        }
     }
 }

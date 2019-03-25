@@ -28,6 +28,8 @@ namespace Console
         public string DataDirectory { get; }
         public string DataTemporaryDirectory { get; }
 
+        public int DebugLevel = 0;
+
         public double Now => TimeSinceStartup();
         
         public Version Version { get; }

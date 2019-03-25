@@ -9,6 +9,8 @@ namespace Console.Plugins
 
         internal void Enqueue(string path, PluginsQueueAction action)
         {
+            Log.Debug($"Adding plugin to queue ({action}, {path})", 6);
+            
             var entry = PluginsQueueEntry.Find(path);
             if (entry != null)
             {
@@ -52,6 +54,7 @@ namespace Console.Plugins
 
         internal void Process()
         {
+            Log.Debug($"Processing plugins queue entry ({Action}, {Path})", 6);
             switch (Action)
             {
                 case PluginsQueueAction.Load:

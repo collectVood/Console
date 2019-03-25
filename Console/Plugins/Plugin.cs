@@ -145,6 +145,7 @@ namespace Console.Plugins
         /// </summary>
         public void UpdateDependencies()
         {
+            Log.Debug($"Calling dependencies in plugin {Name}", 4);
             for (var i = 0; i < Dependencies.Count; i++)
             {
                 Dependencies[i].Update();
@@ -165,6 +166,8 @@ namespace Console.Plugins
         /// <returns></returns>
         private object CallHook(string name, params object[] args)
         {
+            Log.Debug($"Calling a hook on {Name} ({name})", 5);
+            
             if (!IsLoaded)
                 return null;
             

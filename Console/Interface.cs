@@ -97,6 +97,7 @@ namespace Console
 
         public static void UpdateDependencies()
         {
+            Log.Debug("Updating all dependencies", 3);
             Plugins.ForEach(x => x.UpdateDependencies());
         }
         
@@ -137,8 +138,10 @@ namespace Console
 
         public static bool Load(string name)
         {
+            Log.Debug($"Loading plugin {name}", 3);
+            
             var plugin = FindPlugin(name);
-            if (plugin == null)
+            if (plugin == null || plugin.IsLoaded)
                 return false;
 
             plugin.IsLoaded = true;
@@ -152,8 +155,10 @@ namespace Console
 
         public static bool Unload(string name)
         {
+            Log.Debug($"Unloading plugin {name}", 3);
+            
             var plugin = FindPlugin(name);
-            if (plugin == null)
+            if (plugin == null || !plugin.IsLoaded)
                 return false;
             
             plugin.IsLoaded = false;
