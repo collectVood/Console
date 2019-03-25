@@ -62,6 +62,7 @@
     <Compile Include="Plugins\Hooks\HookMethodAttribute.cs" />
     <Compile Include="Plugins\Hooks\HookResult.cs" />
     <Compile Include="Plugins\InfoAttribute.cs" />
+    <Compile Include="Plugins\Language.cs" />
     <Compile Include="Plugins\Network\BaseClient.cs" />
     <Compile Include="Plugins\Network\BaseMessage.cs" />
     <Compile Include="Plugins\Network\Client\Client.cs" />

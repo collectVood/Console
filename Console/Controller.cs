@@ -25,6 +25,7 @@ namespace Console
         public string RootDirectory { get; }
         public string PluginDirectory { get; }
         public string LogDirectory { get; }
+        public string LanguageDirectory { get; }
         public string DataDirectory { get; }
         public string DataTemporaryDirectory { get; }
 
@@ -46,6 +47,7 @@ namespace Console
             RootDirectory = Environment.CurrentDirectory;
             PluginDirectory = Path.Combine(RootDirectory, "plugins");
             LogDirectory = Path.Combine(RootDirectory, "logs");
+            LanguageDirectory = Path.Combine(RootDirectory, "lang");
             DataDirectory = Path.Combine(RootDirectory, "data");
             DataTemporaryDirectory = Path.Combine(DataDirectory, "Temporary");
 
@@ -53,6 +55,8 @@ namespace Console
                 Directory.CreateDirectory(PluginDirectory);
             if (!Directory.Exists(LogDirectory))
                 Directory.CreateDirectory(LogDirectory);
+            if (!Directory.Exists(LanguageDirectory))
+                Directory.CreateDirectory(LanguageDirectory);
             if (!Directory.Exists(DataDirectory))
                 Directory.CreateDirectory(DataDirectory);
             if (!Directory.Exists(DataTemporaryDirectory))
