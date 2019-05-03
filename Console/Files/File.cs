@@ -63,13 +63,13 @@ namespace Console.Files
 
         public void Write(object obj)
         {
+            Exists(true);
+
             lock (_lock)
             {
-                Exists(true);
-                
                 if (IsJson)
                     WriteJson(obj);
-                
+
                 if (IsBinary)
                     WriteBinary(obj);
             }
@@ -77,11 +77,11 @@ namespace Console.Files
 
         public T Read<T>()
         {
+            if (!Exists(false))
+                return GetInstanceOf<T>();
+            
             lock (_lock)
             {
-                if (!Exists(false))
-                    return GetInstanceOf<T>();
-                
                 if (IsJson)
                     return ReadJson<T>();
                 

@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace Console.Files
@@ -28,13 +27,13 @@ namespace Console.Files
             FileCache.Get(GetPath(file)).Write(obj);
         }
 
-        public static bool Exists(string path, bool create = false) => new File(path).Exists(create);
+        public bool Exists(string file, bool create = false) => FileCache.Get(GetPath(file)).Exists(create);
         
         #endregion
         
         #region Helpers
 
-        private string GetPath(string file)
+        public string GetPath(string file)
         {
             var isRooted = Path.IsPathRooted(file);
             return isRooted ? file : Path.Combine(Directory, file);

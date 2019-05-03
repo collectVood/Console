@@ -5,7 +5,7 @@ namespace Console.Files
 {
     public static class FileCache
     {
-        private static List<File> _cache;
+        private static List<File> _cache = new List<File>();
 
         public static File Get(string path)
         {
