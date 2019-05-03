@@ -49,6 +49,7 @@
     <Compile Include="Files\DataFileSystem.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Files\File.cs" />
+    <Compile Include="Files\FileCache.cs" />
     <Compile Include="Interface.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Plugins\Commands\Command.cs" />

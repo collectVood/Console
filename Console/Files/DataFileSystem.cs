@@ -19,12 +19,12 @@ namespace Console.Files
 
         public T Read<T>(string file)
         {
-            return new File(Path.Combine(Directory, file)).Read<T>();
+            return FileCache.Get(GetPath(file)).Read<T>();
         }
 
-        public void Write<T>(T obj, string file)
+        public void Write(object obj, string file)
         {
-            new File(Path.Combine(Directory, file)).Write(obj);
+            FileCache.Get(GetPath(file)).Write(obj);
         }
 
         public static bool Exists(string path, bool create = false) => new File(path).Exists(create);
