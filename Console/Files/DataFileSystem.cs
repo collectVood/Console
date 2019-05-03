@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Console.Files
@@ -36,7 +37,7 @@ namespace Console.Files
         private string GetPath(string file)
         {
             var isRooted = Path.IsPathRooted(file);
-            return isRooted ? Path.Combine(Directory, file) : file;
+            return isRooted ? file : Path.Combine(Directory, file);
         }
         
         #endregion
