@@ -46,8 +46,9 @@
   <ItemGroup>
     <Compile Include="ConsoleManager.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="DataFileSystem.cs" />
+    <Compile Include="Files\DataFileSystem.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Files\File.cs" />
     <Compile Include="Interface.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Plugins\Commands\Command.cs" />

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Console.Files;
 
 namespace Console.Plugins
 {
@@ -20,12 +21,12 @@ namespace Console.Plugins
                 messages = new Dictionary<string, string>();
 
             messages[key] = message;
-            DataFileSystem.WriteObject(messages, file);
+            DataFileSystem.Write(messages, file);
         }
 
         public static Dictionary<string, string> GetMessages(string file)
         {
-            return DataFileSystem.ReadObject<Dictionary<string, string>>(file);
+            return DataFileSystem.Read<Dictionary<string, string>>(file);
         }
 
         public static string GetMessage(string file, string key)

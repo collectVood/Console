@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Console.Files;
 using Console.Plugins;
 using Console.Plugins.Core;
 using Timer = Console.Plugins.Timers.Timer;
