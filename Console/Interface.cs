@@ -112,7 +112,7 @@ namespace Console
                 var assembly = Assembly.Load(File.ReadAllBytes(path));
                 var type = assembly.GetType("Console.Plugins." + Path.GetFileNameWithoutExtension(path));
 
-                Plugin.CreatePlugin(type, path);
+                Plugin.CreatePlugin(type, path, true);
                 UpdateDependencies();
             }
             catch (IOException)
@@ -158,7 +158,7 @@ namespace Console
             Log.Debug($"Unloading plugin {name}", 3);
             
             var plugin = FindPlugin(name);
-            if (plugin == null || !plugin.IsLoaded)
+            if (plugin == null || !plugin.IsLoaded || !plugin.IsUnloadable)
                 return false;
             
             plugin.IsLoaded = false;

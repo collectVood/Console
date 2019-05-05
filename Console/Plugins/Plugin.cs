@@ -23,6 +23,7 @@ namespace Console.Plugins
         
         public bool IsLoaded { get; internal set; }
         public bool IsCorePlugin { get; private set; }
+        public bool IsUnloadable { get; private set; }
         
         protected internal Dictionary<string, HookMethod> Hooks { get; } = PoolNew<Dictionary<string, HookMethod>>.Get();
         protected internal Dictionary<string, Command> Commands { get; } = PoolNew<Dictionary<string, Command>>.Get();
@@ -30,7 +31,7 @@ namespace Console.Plugins
         
         #endregion
 
-        internal static bool CreatePlugin(Type type, string path)
+        internal static bool CreatePlugin(Type type, string path, bool isUnloadable)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace Console.Plugins
 
                 if (Activator.CreateInstance(type) is Plugin plugin)
                 {
-                    plugin.Initialize(path);
+                    plugin.Initialize(path, isUnloadable);
                     return true;
                 }
 
@@ -53,7 +54,7 @@ namespace Console.Plugins
             }
         }
 
-        internal void Initialize(string path)
+        internal void Initialize(string path, bool isUnloadable)
         {
             var type = GetType();
 
@@ -64,6 +65,7 @@ namespace Console.Plugins
             Author = "Unknown";
             Version = new Version(1, 0, 0);
             IsCorePlugin = string.IsNullOrEmpty(Path);
+            IsUnloadable = isUnloadable;
 
             var info = type.GetCustomAttribute<InfoAttribute>();
             if (info != null)
