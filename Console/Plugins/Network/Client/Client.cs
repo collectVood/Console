@@ -12,9 +12,18 @@ namespace Console.Plugins.Network.Client
             try
             {
                 Client = new TcpClient();
-                Client.Connect(address, port);
+                try
+                {
+                    Client.Connect(address, port);
+                }
+                catch (SocketException)
+                {
+                    Log.Warning("Unable to connect to this server.");
+                    return;
+                } 
+
                 Stream = Client?.GetStream();
-                StartReceiving();
+                StartListening();
             }
             catch (Exception e)
             {

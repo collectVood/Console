@@ -14,6 +14,8 @@ namespace Console.Plugins.Network
         public Events.OnNewMessage OnNewMessage = m => {};
         public Events.OnNewMessage OnMessageSent = m => {};
 
+        public Thread ListenThread;
+
         public bool IsConnected => Client != null && Stream != null && Client.Connected;
 
         public void SendMessage(string message)
@@ -24,21 +26,23 @@ namespace Console.Plugins.Network
             OnMessageSent(msg);
         }
 
-        public void StartReceiving()
+        public void StartListening()
         {
-            new Thread(() =>
+            ListenThread = new Thread(() =>
             {
                 while (true)
                 {
                     var message = ReceiveMessage();
                     if (string.IsNullOrEmpty(message))
                         continue;
-                    
+
                     OnNewMessage(new BaseMessage(this, message));
                 }
-                
+
                 // ReSharper disable once FunctionNeverReturns
-            }).Start();
+            });
+            
+            ListenThread.Start();
         }
 
         private string ReceiveMessage()
@@ -68,6 +72,8 @@ namespace Console.Plugins.Network
 
         public void Close()
         {
+            ListenThread.Abort();
+            
             Stream?.Close();
             Client?.Close();
         }

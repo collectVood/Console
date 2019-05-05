@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 
 namespace Console.Plugins.Network.Server
@@ -9,10 +10,12 @@ namespace Console.Plugins.Network.Server
     {
         public TcpListener Listener { get; private set; }
         public List<BaseClient> Clients { get; } = new List<BaseClient>();
-        public bool IsInitialized = false;
+        public bool IsInitialized => IsListenerActive();
 
         public event Events.OnNewClient OnNewClient = c => {};
         public event Events.OnNewMessage OnNewMessage = c => {};
+
+        public Thread ListenThread;
 
         public BaseServer(IPAddress address, int port)
         {
@@ -22,17 +25,17 @@ namespace Console.Plugins.Network.Server
             Listener = new TcpListener(address, port);
             Listener.Start();
 
-            new Thread(() =>
+            ListenThread = new Thread(() =>
             {
                 while (true)
                 {
-                    HandleNewClient(Listener.AcceptTcpClient());
+                    HandleNewClient(Listener?.AcceptTcpClient());
                 }
                 
                 // ReSharper disable once FunctionNeverReturns
-            }).Start();
-
-            IsInitialized = true;
+            });
+            
+            ListenThread.Start();
         }
 
         private void HandleNewClient(TcpClient tcpClient)
@@ -45,7 +48,7 @@ namespace Console.Plugins.Network.Server
             Clients.Add(client);
 
             client.OnNewMessage += m => OnNewMessage(m);
-            client.StartReceiving();
+            client.StartListening();
             OnNewClient(client);
         }
 
@@ -56,8 +59,15 @@ namespace Console.Plugins.Network.Server
             {
                 Clients[i]?.Close();
             }
-            
+
+            ListenThread.Abort();
             Listener?.Stop();
+        }
+
+        public bool IsListenerActive()
+        {
+            return Listener?.GetType().GetProperty("Active", BindingFlags.Instance | BindingFlags.NonPublic)
+                       ?.GetValue(Listener) is bool result && result;
         }
     }
 }
