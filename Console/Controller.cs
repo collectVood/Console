@@ -92,8 +92,7 @@ namespace Console
             GC.KeepAlive(FSWatcherPlugins);
             
             // Version setup
-            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            Version = new Version(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build);
+            Version = new Version(Assembly.GetExecutingAssembly());
             
             // Initializing console
             ConsoleManager = new ConsoleManager();

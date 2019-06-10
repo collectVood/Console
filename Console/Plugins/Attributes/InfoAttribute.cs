@@ -9,6 +9,12 @@ namespace Console.Plugins.Attributes
         internal string Author { get; }
         internal Version Version { get; }
 
+        /// <summary>
+        /// Creates plugin info
+        /// </summary>
+        /// <param name="title">Title</param>
+        /// <param name="author">Author</param>
+        /// <param name="version">Version</param>
         public InfoAttribute(string title, string author, Version version)
         {
             Title = title;
@@ -16,6 +22,12 @@ namespace Console.Plugins.Attributes
             Version = version;
         }
 
+        /// <summary>
+        /// Creates plugin info
+        /// </summary>
+        /// <param name="title">Title</param>
+        /// <param name="author">Author</param>
+        /// <param name="version">Version</param>
         public InfoAttribute(string title, string author, string version)
         {
             var ver = new Version(1, 0, 0);
@@ -28,6 +40,19 @@ namespace Console.Plugins.Attributes
             Title = title;
             Author = author;
             Version = ver;
+        }
+
+        /// <summary>
+        /// Creates plugin info with automatic version from assembly
+        /// </summary>
+        /// <param name="title">Title</param>
+        /// <param name="author">Author</param>
+        /// <param name="type">Type of the plugin</param>
+        public InfoAttribute(string title, string author, Type type)
+        {
+            Title = title;
+            Author = author;
+            Version = new Version(type.Assembly);
         }
     }
 }

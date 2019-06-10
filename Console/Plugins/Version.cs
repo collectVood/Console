@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Console.Plugins
 {
     public class Version
@@ -11,6 +13,15 @@ namespace Console.Plugins
             Major = major;
             Minor = minor;
             Patch = patch;
+        }
+
+        public Version(Assembly assembly)
+        {
+            var version = assembly.GetName().Version;
+            
+            Major = version.Major;
+            Minor = version.Minor;
+            Patch = version.Build;
         }
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}";
