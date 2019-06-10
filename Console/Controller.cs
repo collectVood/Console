@@ -18,7 +18,7 @@ namespace Console
         public static ConsoleManager ConsoleManager { get; private set; }
         
         private FileSystemWatcher FSWatcherPlugins { get; }
-        public DataFileSystem DataFileSystem { get; private set; }
+        public DataFileSystem DataFileSystem { get; }
 
         private List<Action> _nextTickQueue = new List<Action>();
         

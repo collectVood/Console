@@ -1,7 +1,4 @@
-using System;
 using System.Data.Linq;
-using System.Text;
-using Console;
 using Console.Security;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
