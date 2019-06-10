@@ -20,6 +20,10 @@ namespace Console.Files
         
         #endregion
 
+        /// <summary>
+        /// Creates a new File instance
+        /// </summary>
+        /// <param name="path">Path to the file</param>
         public File(string path)
         {
             var extension = Path.GetExtension(path);
@@ -32,6 +36,11 @@ namespace Console.Files
         
         #region Methods
 
+        /// <summary>
+        /// Does the file exist
+        /// </summary>
+        /// <param name="create">Create file if it doesn't exist if true</param>
+        /// <returns>Returns whether the file exists</returns>
         public bool Exists(bool create)
         {
             lock (_lock)
@@ -60,6 +69,10 @@ namespace Console.Files
             }
         }
 
+        /// <summary>
+        /// Write object to the file
+        /// </summary>
+        /// <param name="obj">Object to write</param>
         public void Write(object obj)
         {
             Exists(true);
@@ -74,6 +87,11 @@ namespace Console.Files
             }
         }
 
+        /// <summary>
+        /// Read T object from the file
+        /// </summary>
+        /// <typeparam name="T">Type of the return value</typeparam>
+        /// <returns>T instance from file</returns>
         public T Read<T>()
         {
             if (!Exists(false))

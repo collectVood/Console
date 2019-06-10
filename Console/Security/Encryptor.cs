@@ -2,6 +2,12 @@ namespace Console.Security
 {
     public static class Encryptor
     {
+        /// <summary>
+        /// Encrypt bytes with a password
+        /// </summary>
+        /// <param name="data">Data bytes</param>
+        /// <param name="password">Password bytes for encrypting</param>
+        /// <returns></returns>
         public static byte[] Encrypt(byte[] data, byte[] password)
         {
             if (password.Length == 0)
