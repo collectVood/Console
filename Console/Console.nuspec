@@ -10,6 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <copyright>Copyright (c) 2018-2019 Iv Misticos</copyright>
+	<license type="expression">MIT</license>
     <tags>Console Plugins CLI</tags>
   </metadata>
 </package>
