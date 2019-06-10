@@ -41,10 +41,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataFileSystem.cs" />
+    <Compile Include="Encryption.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

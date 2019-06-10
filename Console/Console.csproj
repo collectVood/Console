@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="ConsoleManager.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="Converter.cs" />
+    <Compile Include="Security\Encryptor.cs" />
     <Compile Include="Files\DataFileSystem.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Files\File.cs" />

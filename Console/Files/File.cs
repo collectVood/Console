@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
@@ -78,7 +77,7 @@ namespace Console.Files
         public T Read<T>()
         {
             if (!Exists(false))
-                return GetInstanceOf<T>();
+                return Converter.GetInstanceOf<T>();
             
             lock (_lock)
             {
@@ -89,7 +88,7 @@ namespace Console.Files
                     return ReadBinary<T>();
             }
 
-            return GetInstanceOf<T>(); // :P
+            return Converter.GetInstanceOf<T>(); // :P
         }
 
         private void WriteJson(object obj)
@@ -104,7 +103,7 @@ namespace Console.Files
             {
                 using (var writer = new BinaryWriter(fs))
                 {
-                    writer.Write(GetBytesFromObject(obj));
+                    writer.Write(Converter.GetBytesFromObject(obj));
                 }
             }
         }
@@ -118,32 +117,9 @@ namespace Console.Files
         private T ReadBinary<T>()
         {
             var bytes = System.IO.File.ReadAllBytes(FilePath);
-            return GetObjectFromBytes<T>(bytes);
+            return Converter.GetObjectFromBytes<T>(bytes);
         }
         
-        #endregion
-        
-        #region Helpers
-
-        private byte[] GetBytesFromObject(object obj)
-        {
-            using (var ms = new MemoryStream())
-            {
-                _binaryFormatter.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
-
-        private T GetObjectFromBytes<T>(byte[] bytes)
-        {
-            using (var ms = new MemoryStream(bytes))
-            {
-                return (T) _binaryFormatter.Deserialize(ms);
-            }
-        }
-
-        private T GetInstanceOf<T>() => Activator.CreateInstance<T>();
-
         #endregion
     }
 }
