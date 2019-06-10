@@ -60,7 +60,6 @@
     <Compile Include="Log.cs" />
     <Compile Include="Plugins\Commands\Command.cs" />
     <Compile Include="Plugins\Commands\CommandArgument.cs" />
-    <Compile Include="Plugins\Core\Chat.cs" />
     <Compile Include="Plugins\Core\Core.cs" />
     <Compile Include="Plugins\Dependencies\Dependency.cs" />
     <Compile Include="Plugins\Hooks\HookMethod.cs" />
