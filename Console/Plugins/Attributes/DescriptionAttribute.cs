@@ -1,6 +1,6 @@
 using System;
 
-namespace Console.Plugins
+namespace Console.Plugins.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class DescriptionAttribute : Attribute

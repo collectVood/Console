@@ -8,7 +8,7 @@ namespace Console.Plugins.Network.Server
 {
     public class BaseServer
     {
-        public TcpListener Listener { get; private set; }
+        public TcpListener Listener { get; }
         public List<BaseClient> Clients { get; } = new List<BaseClient>();
         public bool IsInitialized => IsListenerActive();
 
@@ -27,17 +27,19 @@ namespace Console.Plugins.Network.Server
 
             ListenThread = new Thread(() =>
             {
-                while (true)
+                while (IsInitialized)
                 {
                     HandleNewClient(Listener?.AcceptTcpClient());
                 }
-                
-                // ReSharper disable once FunctionNeverReturns
             });
             
             ListenThread.Start();
         }
 
+        /// <summary>
+        /// Handles new TCP client
+        /// </summary>
+        /// <param name="tcpClient">TCP client</param>
         private void HandleNewClient(TcpClient tcpClient)
         {
             var stream = tcpClient?.GetStream();
@@ -52,6 +54,9 @@ namespace Console.Plugins.Network.Server
             OnNewClient(client);
         }
 
+        /// <summary>
+        /// Closes all connections and stops the server
+        /// </summary>
         public void Close()
         {
             var clientsCount = Clients.Count;
@@ -60,10 +65,13 @@ namespace Console.Plugins.Network.Server
                 Clients[i]?.Close();
             }
 
-            ListenThread.Abort();
             Listener?.Stop();
         }
 
+        /// <summary>
+        /// Returns true if the listener is active
+        /// </summary>
+        /// <returns>True if the listener is active</returns>
         public bool IsListenerActive()
         {
             return Listener?.GetType().GetProperty("Active", BindingFlags.Instance | BindingFlags.NonPublic)

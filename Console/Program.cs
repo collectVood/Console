@@ -2,15 +2,14 @@
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
             var controller = new Controller();
             
-            while (true)
+            while (controller.IsRunning)
             {
                 controller.OnFrame();
             }
-            // ReSharper disable once FunctionNeverReturns
         }
     }
 }

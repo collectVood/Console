@@ -68,7 +68,7 @@ namespace Console
             lock (_currentPool)
             {
                 var pool = _currentPool;
-                pool._pool.Enqueue(default(T));
+                pool._pool.Enqueue(default);
             }
         }
     }

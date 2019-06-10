@@ -1,6 +1,6 @@
 using System;
 
-namespace Console.Plugins.Commands
+namespace Console.Plugins.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class CommandAttribute : Attribute

@@ -21,7 +21,7 @@ namespace Console
         #region Hooks
         
         /// <summary>
-        /// Calls a specified hook on every plugin
+        /// Call a specified hook on every plugin
         /// </summary>
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
@@ -39,8 +39,8 @@ namespace Console
                     var plugin = Plugins[i];
                     var currentResult = new HookResult(plugin, plugin.IsLoaded ? plugin.Call(name, args) : null);
                     results.Add(currentResult);
-                    if (currentResult.Result != null)
-                        result = currentResult.Result;
+                    if (currentResult.Value != null)
+                        result = currentResult.Value;
                 }
 
                 for (var i = 0; i < Plugins.Count - 1; i++)
@@ -50,7 +50,7 @@ namespace Console
                         var result1 = results[i];
                         var result2 = results[j];
 
-                        if (result1.Result == null || result2.Result == null || result1.Result.Equals(result2.Result))
+                        if (result1.Value == null || result2.Value == null || result1.Value.Equals(result2.Value))
                             continue;
                         
                         conflicts.Add(result1);
@@ -72,7 +72,7 @@ namespace Console
         }
 
         /// <summary>
-        /// Calls a specified hook on every plugin
+        /// Call a specified hook on every plugin
         /// </summary>
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
@@ -85,7 +85,7 @@ namespace Console
         }
 
         /// <summary>
-        /// Calls a specified hook on every plugin
+        /// Call a specified hook on every plugin
         /// </summary>
         /// <param name="name">Hook name</param>
         /// <param name="args"></param>
@@ -95,6 +95,9 @@ namespace Console
         
         #region Dependencies
 
+        /// <summary>
+        /// Update all dependencies in every plugin
+        /// </summary>
         public static void UpdateDependencies()
         {
             Log.Debug("Updating all dependencies", 3);
@@ -105,6 +108,10 @@ namespace Console
         
         #region Plugins
 
+        /// <summary>
+        /// Load assembly at the specified file path
+        /// </summary>
+        /// <param name="path">File path</param>
         internal static void LoadAssembly(string path)
         {
             try
@@ -125,6 +132,10 @@ namespace Console
             }
         }
 
+        /// <summary>
+        /// Unload assembly at the specified file path
+        /// </summary>
+        /// <param name="path">File path</param>
         internal static void UnloadAssembly(string path)
         {
             var plugin = FindPluginByPath(path);
@@ -136,6 +147,11 @@ namespace Console
             UpdateDependencies();
         }
 
+        /// <summary>
+        /// Load specified plugin
+        /// </summary>
+        /// <param name="name">Plugin name</param>
+        /// <returns>True if the plugin was loaded</returns>
         public static bool Load(string name)
         {
             Log.Debug($"Loading plugin {name}", 3);
@@ -153,6 +169,11 @@ namespace Console
             return true;
         }
 
+        /// <summary>
+        /// Unload specified plugin
+        /// </summary>
+        /// <param name="name">Plugin name</param>
+        /// <returns>True if the plugin was unloaded</returns>
         public static bool Unload(string name)
         {
             Log.Debug($"Unloading plugin {name}", 3);
@@ -170,6 +191,12 @@ namespace Console
             return true;    
         }
 
+        /// <summary>
+        /// Find plugin by name
+        /// </summary>
+        /// <param name="name">Plugin name</param>
+        /// <param name="loaded">Whether we should include ONLY loaded plugins</param>
+        /// <returns></returns>
         public static Plugin FindPlugin(string name, bool loaded = false)
         {
             for (var i = 0; i < Plugins.Count; i++)
@@ -182,6 +209,12 @@ namespace Console
             return null;
         }
 
+        /// <summary>
+        /// Find plugin by file path
+        /// </summary>
+        /// <param name="path">Plugin file path</param>
+        /// <param name="loaded">Whether we should include ONLY loaded plugins</param>
+        /// <returns></returns>
         public static Plugin FindPluginByPath(string path, bool loaded = false)
         {
             for (var i = 0; i < Plugins.Count; i++)

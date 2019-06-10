@@ -1,6 +1,6 @@
 using System;
 
-namespace Console.Plugins.Hooks
+namespace Console.Plugins.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public class HookMethodAttribute : Attribute

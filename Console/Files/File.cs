@@ -12,10 +12,19 @@ namespace Console.Files
 
         private static BinaryFormatter _binaryFormatter = new BinaryFormatter();
         
+        /// <summary>
+        /// Path to the file
+        /// </summary>
         public string FilePath { get; }
         
+        /// <summary>
+        /// Returns true if the file is in JSON (.json) format
+        /// </summary>
         public bool IsJson { get; }
         
+        /// <summary>
+        /// Returns true if the file is in BINARY (.data) format
+        /// </summary>
         public bool IsBinary { get; }
         
         #endregion

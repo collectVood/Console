@@ -18,6 +18,10 @@ namespace Console.Plugins.Network
 
         public bool IsConnected => Client != null && Stream != null && Client.Connected;
 
+        /// <summary>
+        /// Send a message to the server
+        /// </summary>
+        /// <param name="message">Message entry</param>
         public void SendMessage(string message)
         {
             var msg = new BaseMessage(this, message);
@@ -26,11 +30,14 @@ namespace Console.Plugins.Network
             OnMessageSent(msg);
         }
 
-        public void StartListening()
+        /// <summary>
+        /// Start listening for server messages
+        /// </summary>
+        internal void StartListening()
         {
             ListenThread = new Thread(() =>
             {
-                while (true)
+                while (IsConnected)
                 {
                     var message = ReceiveMessage();
                     if (string.IsNullOrEmpty(message))
@@ -38,13 +45,15 @@ namespace Console.Plugins.Network
 
                     OnNewMessage(new BaseMessage(this, message));
                 }
-
-                // ReSharper disable once FunctionNeverReturns
             });
             
             ListenThread.Start();
         }
 
+        /// <summary>
+        /// Receives a message from the server
+        /// </summary>
+        /// <returns>Message</returns>
         private string ReceiveMessage()
         {
             if (!IsConnected)
@@ -70,6 +79,9 @@ namespace Console.Plugins.Network
             return reply;
         }
 
+        /// <summary>
+        /// Closes all connections and stops the client
+        /// </summary>
         public void Close()
         {
             ListenThread.Abort();

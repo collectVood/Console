@@ -1,6 +1,6 @@
 using System;
 
-namespace Console.Plugins.Dependencies
+namespace Console.Plugins.Attributes
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class DependencyAttribute : Attribute

@@ -1,8 +1,6 @@
-// ReSharper disable InconsistentNaming
-
 using System.Net;
+using Console.Plugins.Attributes;
 using Console.Plugins.Commands;
-using Console.Plugins.Hooks;
 using Console.Plugins.Network;
 using Console.Plugins.Network.Server;
 using Client = Console.Plugins.Network.Client.Client;
@@ -149,7 +147,7 @@ namespace Console.Plugins.Core
             var server = _server?.IsInitialized == true ? "RUNNING" : "STOPPED";
             var client = _client?.IsConnected == true ? "RUNNING" : "STOPPED";
             
-            arg.Reply($"STATUS\n" +
+            arg.Reply("STATUS\n" +
                       $"Server: {server}\n" +
                       $"Client: {client}");
         }
@@ -170,13 +168,13 @@ namespace Console.Plugins.Core
         
         #region Message Handling
 
-        public void OnMessage(BaseMessage msg)
+        private void OnMessage(BaseMessage msg)
         {
             if (msg.Sender == _client)
                 return;
             
             var message = msg.GetMessage();
-            Log.Warning($"NEW MESSAGE: {message}");
+            Log.Warning($"Message: {message}");
         }
         
         #endregion

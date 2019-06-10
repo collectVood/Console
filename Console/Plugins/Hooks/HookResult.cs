@@ -3,26 +3,25 @@ namespace Console.Plugins.Hooks
     public class HookResult
     {
         /// <summary>
-        /// Plugin
+        /// Plugin instance
         /// </summary>
         public Plugin Plugin { get; }
 
         /// <summary>
-        /// Result (what plugin returned)
+        /// Returned value
         /// </summary>
-        public object Result { get; }
+        public object Value { get; }
 
-        /// <summary>
-        /// Constructor for HookConflict
-        /// </summary>
-        /// <param name="plugin">Plugin</param>
-        /// <param name="result">Result</param>
-        public HookResult(Plugin plugin, object result)
+        public HookResult(Plugin plugin, object value)
         {
             Plugin = plugin;
-            Result = result;
+            Value = value;
         }
 
-        public override string ToString() => $"{Plugin.Title} ({Result.GetType()}: {Result})";
+        /// <summary>
+        /// Formats current hook result
+        /// </summary>
+        /// <returns>String representation of hook result</returns>
+        public override string ToString() => $"{Plugin.Title} ({Value.GetType()}: {Value})";
     }
 }

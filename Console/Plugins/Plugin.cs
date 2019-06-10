@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Console.Plugins.Attributes;
 using Console.Plugins.Commands;
 using Console.Plugins.Dependencies;
 using Console.Plugins.Hooks;
-
-// ReSharper disable MemberCanBePrivate.Global
 
 namespace Console.Plugins
 {
@@ -25,12 +24,19 @@ namespace Console.Plugins
         public bool IsCorePlugin { get; private set; }
         public bool IsUnloadable { get; private set; }
         
-        protected internal Dictionary<string, HookMethod> Hooks { get; } = PoolNew<Dictionary<string, HookMethod>>.Get();
-        protected internal Dictionary<string, Command> Commands { get; } = PoolNew<Dictionary<string, Command>>.Get();
-        protected internal List<Dependency> Dependencies { get; } = PoolNew<List<Dependency>>.Get();
+        protected internal Dictionary<string, HookMethod> Hooks { get; } = new Dictionary<string, HookMethod>();
+        protected internal Dictionary<string, Command> Commands { get; } = new Dictionary<string, Command>();
+        protected internal List<Dependency> Dependencies { get; } = new List<Dependency>();
         
         #endregion
 
+        /// <summary>
+        /// Create a plugin instance with the specified path and initialize it
+        /// </summary>
+        /// <param name="type">Plugin type</param>
+        /// <param name="path">Plugin path</param>
+        /// <param name="isUnloadable">Whether the plugin is unloadable</param>
+        /// <returns>True whether everything ended successfully</returns>
         internal static bool CreatePlugin(Type type, string path, bool isUnloadable)
         {
             try
@@ -54,6 +60,11 @@ namespace Console.Plugins
             }
         }
 
+        /// <summary>
+        /// Initialize a plugin
+        /// </summary>
+        /// <param name="path">Plugin path</param>
+        /// <param name="isUnloadable">Whether the plugin is unloadable</param>
         internal void Initialize(string path, bool isUnloadable)
         {
             var type = GetType();
@@ -118,19 +129,18 @@ namespace Console.Plugins
                 }
             }
             
-            UpdateDependencies();
-            
             Interface.Plugins.Add(this);
+            Interface.UpdateDependencies();
             Interface.Load(Name);
         }
         
         #region Dependencies
 
         /// <summary>
-        /// Adds a dependency
+        /// Add a dependency
         /// </summary>
         /// <param name="name">Dependency (plugin) name</param>
-        /// <param name="field"></param>
+        /// <param name="field">Field Info instance of the needed field</param>
         public void AddDependency(string name, FieldInfo field)
         {
             if (!Dependency.HasMatchingSignature(field))
@@ -143,7 +153,7 @@ namespace Console.Plugins
         }
 
         /// <summary>
-        /// Update all dependencies (find all dependencies)
+        /// Update all dependencies
         /// </summary>
         public void UpdateDependencies()
         {
@@ -161,11 +171,11 @@ namespace Console.Plugins
         #region Hooks
 
         /// <summary>
-        /// Calls a hook
+        /// Call a specified hook
         /// </summary>
         /// <param name="name">Hook name</param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="args">Arguments</param>
+        /// <returns>Result value</returns>
         private object CallHook(string name, params object[] args)
         {
             Log.Debug($"Calling a hook on {Name} ({name})", 5);
@@ -186,24 +196,31 @@ namespace Console.Plugins
         }
 
         /// <summary>
-        /// Calls a hook
+        /// Call a hook
         /// </summary>
         /// <param name="name">Hook name</param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="args">Arguments</param>
+        /// <returns>Result value</returns>
         public object Call(string name, params object[] args) => CallHook(name, args);
 
+        /// <summary>
+        /// Call a hook with the specified return type
+        /// </summary>
+        /// <param name="name">Hook name</param>
+        /// <param name="args">Arguments</param>
+        /// <typeparam name="T">Type of the return value</typeparam>
+        /// <returns>Result value as T</returns>
         public T Call<T>(string name, params object[] args)
         {
             var result = Call(name, args);
-            return result == null ? default(T) : (T) Convert.ChangeType(result, typeof(T));
+            return result == null ? default : (T) Convert.ChangeType(result, typeof(T));
         }
 
         /// <summary>
-        /// Adds a hook method to plugin
+        /// Add a hook method to plugin
         /// </summary>
         /// <param name="name">Hook name</param>
-        /// <param name="method"></param>
+        /// <param name="method">Method Info instance of the needed method</param>
         public void AddHookMethod(string name, MethodInfo method)
         {
             if (Hooks.ContainsKey(name))
@@ -219,8 +236,8 @@ namespace Console.Plugins
         /// Calls hooks if they exist
         /// </summary>
         /// <param name="name">Hook name</param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="args">Arguments</param>
+        /// <returns>Result value</returns>
         private object OnCallHook(string name, object[] args)
         {
             var hook = FindHook(name, args);
@@ -240,8 +257,8 @@ namespace Console.Plugins
         /// Find all matching hooks for arguments
         /// </summary>
         /// <param name="name">Hook name</param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="args">Arguments</param>
+        /// <returns>Hook method instance</returns>
         public HookMethod FindHook(string name, object[] args) => !Hooks.TryGetValue(name, out var hook) || !hook.CanUseHook(this, args) ? null : hook;
 
         #endregion
@@ -249,10 +266,10 @@ namespace Console.Plugins
         #region Commands
 
         /// <summary>
-        /// Adds a command to plugin
+        /// Add a command to plugin
         /// </summary>
         /// <param name="name">Command name</param>
-        /// <param name="method"></param>
+        /// <param name="method">Method Info instance of the needed method</param>
         public void AddCommand(string name, MethodInfo method)
         {
             name = name.ToLower();
@@ -272,7 +289,7 @@ namespace Console.Plugins
         }
 
         /// <summary>
-        /// Find matching command
+        /// Find a matching command
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

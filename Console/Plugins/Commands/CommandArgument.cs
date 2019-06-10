@@ -17,6 +17,10 @@ namespace Console.Plugins.Commands
 
         #endregion
 
+        /// <summary>
+        /// Execute command with the specified arguments
+        /// </summary>
+        /// <returns>True if command argument instance is valid</returns>
         public bool Execute()
         {
             if (!IsValid)
@@ -38,12 +42,22 @@ namespace Console.Plugins.Commands
         
         #region Building
 
+        /// <summary>
+        /// Build command argument instance from string entry
+        /// </summary>
+        /// <param name="entry">Input for building command argument</param>
+        /// <returns>Built command argument</returns>
         public static CommandArgument Build(string entry)
         {
             var instance = PoolNew<CommandArgument>.Get();
             return instance.BuildCommand(entry);
         }
 
+        /// <summary>
+        /// Build current command argument from string entry
+        /// </summary>
+        /// <param name="entry">Input for building command argument</param>
+        /// <returns>Current instance</returns>
         public CommandArgument BuildCommand(string entry)
         {
             if (string.IsNullOrEmpty(entry))
@@ -70,6 +84,11 @@ namespace Console.Plugins.Commands
             return this;
         }
 
+        /// <summary>
+        /// Builds arguments array from string entry
+        /// </summary>
+        /// <param name="entry">Input for building arguments</param>
+        /// <returns>Arguments array</returns>
         public static string[] BuildArguments(string entry)
         {
             if (string.IsNullOrEmpty(entry))

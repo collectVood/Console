@@ -27,9 +27,9 @@ namespace Console
         internal const string LogFileName = "Log";
         
         /// <summary>
-        /// Prints warning to console
+        /// Print warning to console
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input</param>
         public static void Warning(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
@@ -40,9 +40,9 @@ namespace Console
         }
         
         /// <summary>
-        /// Prints error to console
+        /// Print error to console
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input</param>
         public static void Error(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
@@ -53,9 +53,9 @@ namespace Console
         }
 
         /// <summary>
-        /// Logs exception
+        /// Log exception
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Exception</param>
         public static void Exception(Exception e)
         {
             var input = e?.ToString();
@@ -67,9 +67,9 @@ namespace Console
         }
 
         /// <summary>
-        /// Prints debug text to console
+        /// Print debug text to console
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input</param>
         /// <param name="level">Debug level</param>
         public static void Debug(string input, int level = 1)
         {
@@ -82,9 +82,9 @@ namespace Console
         }
         
         /// <summary>
-        /// Prints informational text to console
+        /// Print informational text to console
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input</param>
         public static void Info(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
@@ -95,9 +95,9 @@ namespace Console
         }
 
         /// <summary>
-        /// Prints text to console
+        /// Print text to console
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">Input</param>
         internal static void Write(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
@@ -106,6 +106,10 @@ namespace Console
             Controller.ConsoleManager.AddMessage(input, ColorDefault);
         }
 
+        /// <summary>
+        /// Log input
+        /// </summary>
+        /// <param name="input"></param>
         internal static void Input(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
@@ -114,9 +118,24 @@ namespace Console
             LogFile($"{LogPathInput}/{LogFileName}", input);
         }
 
+        /// <summary>
+        /// Read a string
+        /// </summary>
+        /// <returns>String</returns>
         public static string Read() => System.Console.ReadLine();
+        
+        /// <summary>
+        /// Reads a key (char)
+        /// </summary>
+        /// <returns>Char</returns>
         public static char ReadKey() => System.Console.ReadKey().KeyChar;
 
+        /// <summary>
+        /// Log text to a file
+        /// </summary>
+        /// <param name="filename">File name</param>
+        /// <param name="text">Text</param>
+        /// <param name="timeStamp">Add time stamp to the file name</param>
         public static void LogFile(string filename, string text, bool timeStamp = true)
         {
             filename = string.Concat(new[]
@@ -131,6 +150,11 @@ namespace Console
             TryLogFile(filename, text);
         }
 
+        /// <summary>
+        /// Try to log text to a file
+        /// </summary>
+        /// <param name="path">File path</param>
+        /// <param name="text">Text</param>
         private static void TryLogFile(string path, string text)
         {
             try

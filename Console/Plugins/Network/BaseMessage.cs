@@ -15,8 +15,16 @@ namespace Console.Plugins.Network
             _data = Encoding.Unicode.GetBytes(message);
         }
 
+        /// <summary>
+        /// Send message to the specified TCP client
+        /// </summary>
+        /// <param name="client">TCP client</param>
         public void Send(TcpClient client) => Send(client?.GetStream());
 
+        /// <summary>
+        /// Send message in the specified network stream
+        /// </summary>
+        /// <param name="stream">Network stream</param>
         public void Send(NetworkStream stream)
         {
             if (_data == null || _data.Length <= 0)
@@ -25,6 +33,10 @@ namespace Console.Plugins.Network
             stream?.Write(_data, 0, _data.Length);
         }
 
+        /// <summary>
+        /// Get message from data array
+        /// </summary>
+        /// <returns>Message</returns>
         public string GetMessage() => Encoding.Unicode.GetString(_data);
     }
 }

@@ -7,6 +7,11 @@ namespace Console.Plugins
         internal List<PluginsQueueEntry> Entries = new List<PluginsQueueEntry>();
         internal double Interval = 1.0d;
 
+        /// <summary>
+        /// Add a new plugin to the queue
+        /// </summary>
+        /// <param name="path">Plugin file path</param>
+        /// <param name="action">Queued action</param>
         internal void Enqueue(string path, PluginsQueueAction action)
         {
             Log.Debug($"Adding plugin to queue ({action}, {path})", 6);
@@ -24,6 +29,9 @@ namespace Console.Plugins
             }
         }
         
+        /// <summary>
+        /// Process queued actions
+        /// </summary>
         internal void Process()
         {
             for (var i = Entries.Count - 1; i >= 0; i--)
@@ -52,6 +60,9 @@ namespace Console.Plugins
             Action = action;
         }
 
+        /// <summary>
+        /// Process current entry
+        /// </summary>
         internal void Process()
         {
             Log.Debug($"Processing plugins queue entry ({Action}, {Path})", 6);
@@ -78,6 +89,11 @@ namespace Console.Plugins
             }
         }
 
+        /// <summary>
+        /// Find a queue entry by plugin file path
+        /// </summary>
+        /// <param name="path">Plugin file path</param>
+        /// <returns>Plugin queue entry instance</returns>
         internal static PluginsQueueEntry Find(string path)
         {
             for (var i = 0; i < Interface.PluginsQueue.Entries.Count; i++)

@@ -22,6 +22,10 @@ namespace Console.Plugins.Commands
             FullName = $"{plugin.Name}.{name}".ToLower();
         }
 
+        /// <summary>
+        /// Execute the command with specified CommandArgument
+        /// </summary>
+        /// <param name="arg">Command argument</param>
         public void Execute(CommandArgument arg)
         {
             try
@@ -34,6 +38,11 @@ namespace Console.Plugins.Commands
             }
         }
 
+        /// <summary>
+        /// Returns true if the method has a matching signature for command
+        /// </summary>
+        /// <param name="method">Method Info instance for the needed method</param>
+        /// <returns>True if the method has a matching signature for command</returns>
         public static bool HasMatchingSignature(MethodInfo method)
         {
             var parameters = method.GetParameters();

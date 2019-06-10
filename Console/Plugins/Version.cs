@@ -18,7 +18,7 @@ namespace Console.Plugins
         public static bool operator ==(Version a, Version b) =>
             a != null && b != null && a.Major == b.Major && a.Minor == b.Minor && a.Patch == b.Patch;
 
-        public static bool operator !=(Version a, Version b) => !(a == b);
+        public static bool operator !=(Version a, Version b) => !(a == b); 
 
         public override bool Equals(object obj)
         {

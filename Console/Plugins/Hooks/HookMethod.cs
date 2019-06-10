@@ -8,7 +8,7 @@ namespace Console.Plugins.Hooks
         public string Name { get; }
         public MethodInfo Method { get; }
         public Plugin Owner { get; }
-        public ParameterInfo[] Parameters() => Method.GetParameters();
+        public ParameterInfo[] GetArguments() => Method.GetParameters();
 
         public bool IsCoreHook => Name.StartsWith("I");
 
@@ -19,31 +19,36 @@ namespace Console.Plugins.Hooks
             Owner = plugin;
         }
 
-        internal object[] FormatArguments(object[] params1)
+        /// <summary>
+        /// Format arguments to be the same length as hook requires
+        /// </summary>
+        /// <param name="args1">Input parameters array</param>
+        /// <returns>Formatted parameters array</returns>
+        internal object[] FormatArguments(object[] args1)
         {
-            var params2 = Parameters();
+            var args2 = GetArguments();
 
-            var length1 = params1?.Length ?? 0;
-            var length2 = params2?.Length ?? 0;
+            var length1 = args1?.Length ?? 0;
+            var length2 = args2?.Length ?? 0;
             
             if (length1 < length2)
                 return null;
             
-            Array.Resize(ref params1, length2);
-            return params1;
+            Array.Resize(ref args1, length2);
+            return args1;
         }
 
         /// <summary>
-        /// Check if params have same signature with the method
+        /// Check if arguments have same signature with the method
         /// </summary>
-        /// <param name="params1"></param>
-        /// <returns></returns>
-        internal bool HasMatchingSignature(object[] params1)
+        /// <param name="args1">Input arguments</param>
+        /// <returns>True if arguments are valid for this hook method</returns>
+        internal bool HasMatchingSignature(object[] args1)
         {
-            var params2 = Parameters();
+            var args2 = GetArguments();
 
-            var length1 = params1?.Length ?? 0;
-            var length2 = params2?.Length ?? 0;
+            var length1 = args1?.Length ?? 0;
+            var length2 = args2?.Length ?? 0;
             
             var toReturn = true;
 
@@ -52,10 +57,10 @@ namespace Console.Plugins.Hooks
 
             for (var i = 0; i < length1; i++)
             {
-                var param1 = params1?[i];
-                var param2 = params2?.Length < i + 1 ? null : params2?[i];
+                var arg1 = args1?[i];
+                var arg2 = args2?.Length < i + 1 ? null : args2?[i];
 
-                if (param1?.GetType() != param2?.ParameterType && param1 != null && param2 != null)
+                if (arg1?.GetType() != arg2?.ParameterType && arg1 != null && arg2 != null)
                     toReturn = false;
             }
 
@@ -63,40 +68,41 @@ namespace Console.Plugins.Hooks
         }
         
         /// <summary>
-        /// Check if parameters could be used for method
+        /// Check if arguments could be used for method
         /// </summary>
-        /// <param name="plugin">Plugin</param>
-        /// <param name="params1">Parameters</param>
-        internal bool CanUseHook(Plugin plugin, object[] params1)
+        /// <param name="plugin">Plugin instance</param>
+        /// <param name="args1">Input arguments</param>
+        /// <returns>True if input arguments are valid for the specified plugin-caller and current hook</returns>
+        internal bool CanUseHook(Plugin plugin, object[] args1)
         {
             if (!plugin.IsCorePlugin && IsCoreHook)
                 return false;
             
-            var params2 = Parameters();
-            var length1 = params1?.Length ?? 0;
-            var length2 = params2?.Length ?? 0;
-            if (params1 == null && params2 == null || length1 == 0 && length2 == 0)
+            var args2 = GetArguments();
+            var length1 = args1?.Length ?? 0;
+            var length2 = args2?.Length ?? 0;
+            if (args1 == null && args2 == null || length1 == 0 && length2 == 0)
                 return true;
 
-            var arr = new object[length2];
+            var args = new object[length2];
 
             if (length2 > length1)
             {
                 for (var i = 0; i < length2; i++)
                 {
-                    var param = params2?[i];
+                    var param = args2?[i];
                     if (param?.DefaultValue != null)
-                        arr[i] = param.DefaultValue;
+                        args[i] = param.DefaultValue;
                     else if (param != null)
-                        arr[i] = Activator.CreateInstance(param.ParameterType);
+                        args[i] = Activator.CreateInstance(param.ParameterType);
                     else
-                        arr[i] = null;
+                        args[i] = null;
                 }
             }
             else
-                arr = params1;
+                args = args1;
 
-            return HasMatchingSignature(arr);
+            return HasMatchingSignature(args);
         }
     }
 }

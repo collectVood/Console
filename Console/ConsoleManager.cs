@@ -71,12 +71,19 @@ namespace Console
         
         #region Console
 
+        /// <summary>
+        /// Initialize console basic settings
+        /// </summary>
         public static void Initialize()
         {
             System.Console.Title = "Console PROJECT";
             System.Console.OutputEncoding = Encoding.UTF8;
         }
 
+        /// <summary>
+        /// Clear lines
+        /// </summary>
+        /// <param name="numLines">Lines to clear</param>
         private void ClearLine(int numLines)
         {
             System.Console.CursorLeft = 0;
@@ -85,6 +92,9 @@ namespace Console
             System.Console.CursorLeft = 0;
         }
 
+        /// <summary>
+        /// Redraw input line
+        /// </summary>
         private void RedrawInputLine()
         {
             if (_nextUpdate - _updateFrequency > Interface.Controller.Now || LineWidth <= 0)
@@ -108,6 +118,9 @@ namespace Console
             }
         }
 
+        /// <summary>
+        /// Update console input, etc
+        /// </summary>
         public void Update()
         {
             if (!Valid)
@@ -147,6 +160,7 @@ namespace Console
                     RedrawInputLine();
                     break;
                 }
+                
                 case ConsoleKey.Tab:
                 {
                     var arr = _completion?.Invoke(_input);
@@ -160,6 +174,7 @@ namespace Console
                     RedrawInputLine();
                     break;
                 }
+                
                 case ConsoleKey.Enter:
                 {
                     ClearLine(1);
@@ -174,12 +189,14 @@ namespace Console
                     RedrawInputLine();
                     break;
                 }
+                
                 case ConsoleKey.Escape:
                 {
                     _input = string.Empty;
                     RedrawInputLine();
                     break;
                 }
+                
                 case ConsoleKey.UpArrow:
                 {
                     if (_inputHistory.Count == 0)
@@ -198,6 +215,7 @@ namespace Console
                     RedrawInputLine();
                     break;
                 }
+                
                 case ConsoleKey.DownArrow:
                 {
                     if (_inputHistory.Count == 0)
@@ -209,6 +227,7 @@ namespace Console
                     RedrawInputLine();
                     break;
                 }
+                
                 default:
                 {
                     if (key.KeyChar == char.MinValue)
@@ -225,6 +244,11 @@ namespace Console
         
         #region Methods
 
+        /// <summary>
+        /// Add a message in console
+        /// </summary>
+        /// <param name="message">Message</param>
+        /// <param name="color">Color of the message</param>
         public void AddMessage(string message, ConsoleColor color)
         {
             System.Console.ForegroundColor = color;

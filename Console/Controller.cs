@@ -17,6 +17,8 @@ namespace Console
         public static Controller Instance { get; private set; }
         public static ConsoleManager ConsoleManager { get; private set; }
         
+        public bool IsRunning { get; private set; }
+
         private FileSystemWatcher FSWatcherPlugins { get; }
         public DataFileSystem DataFileSystem { get; }
 
@@ -39,6 +41,7 @@ namespace Console
         public Controller()
         {
             Instance = this;
+            IsRunning = true;
             
             // Time since startup
             var timer = new Stopwatch();
@@ -69,10 +72,11 @@ namespace Console
             AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
             {
                 Log.Exception((Exception) eventArgs.ExceptionObject);
-                Log.Error("Fatal error! Exit in 5 sec.");
+                Log.Error("Exit in 5 seconds");
                 
                 System.Console.Beep(1000, 1000);
                 Thread.Sleep(5000);
+                IsRunning = false;
                 Environment.Exit(0);
             };
             
@@ -113,7 +117,9 @@ namespace Console
             Interface.CallHook("OnInitialized");
         }
 
-        // ReSharper disable once MemberCanBeMadeStatic.Global
+        /// <summary>
+        /// On every frame
+        /// </summary>
         internal void OnFrame()
         {
             for (var i = _nextTickQueue.Count - 1; i >= 0; i--)
@@ -164,6 +170,10 @@ namespace Console
         
         #region Methods
 
+        /// <summary>
+        /// Execute action in the next frame
+        /// </summary>
+        /// <param name="action">Action to execute</param>
         public void NextFrame(Action action)
         {
             _nextTickQueue.Add(action);

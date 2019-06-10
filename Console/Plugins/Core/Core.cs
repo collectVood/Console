@@ -1,13 +1,13 @@
-// ReSharper disable InconsistentNaming
-
+using Console.Plugins.Attributes;
 using Console.Plugins.Commands;
-using Console.Plugins.Hooks;
 
 namespace Console.Plugins.Core
 {
     [Info("Core", "Iv Misticos", "1.0.0")]
     public class Core : Plugin
     {
+        #region Hooks
+        
         [HookMethod("IOnInput")]
         public void IOnInput(string input)
         {
@@ -39,6 +39,10 @@ namespace Console.Plugins.Core
             
             Interface.CallHook("OnCommand", arg);
         }
+        
+        #endregion
+        
+        #region Commands
 
         [Command("version")]
         public void CommandVersion(CommandArgument arg)
@@ -94,8 +98,11 @@ namespace Console.Plugins.Core
                 return;
             }
 
+            arg.Reply($"Old debug level: {Interface.Controller.DebugLevel}");
             Interface.Controller.DebugLevel = level;
-            arg.Reply($"Done. Current debug level: {level}");
+            arg.Reply($"New debug level: {Interface.Controller.DebugLevel}");
         }
+        
+        #endregion
     }
 }

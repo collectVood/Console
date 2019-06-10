@@ -1,6 +1,6 @@
 using System;
 
-namespace Console.Plugins
+namespace Console.Plugins.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class InfoAttribute : Attribute
