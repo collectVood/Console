@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Console.Plugins.Network.Server
 {
-    public class BaseServer
+    public class Server
     {
         public TcpListener Listener { get; }
         public List<BaseClient> Clients { get; } = new List<BaseClient>();
@@ -17,7 +17,7 @@ namespace Console.Plugins.Network.Server
 
         public Thread ListenThread;
 
-        public BaseServer(IPAddress address, int port)
+        public Server(IPAddress address, int port)
         {
             if (IsInitialized)
                 return;

@@ -70,7 +70,7 @@
     <Compile Include="Plugins\Network\Client\Client.cs" />
     <Compile Include="Plugins\Network\Events.cs" />
     <Compile Include="Plugins\Network\Server\Client.cs" />
-    <Compile Include="Plugins\Network\Server\BaseServer.cs" />
+    <Compile Include="Plugins\Network\Server\Server.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginsQueue.cs" />
     <Compile Include="Plugins\Timers\Timer.cs" />
