@@ -17,9 +17,8 @@ namespace Console.Plugins
             Log.Debug($"Adding plugin to queue ({action}, {path})", 6);
             
             var entry = PluginsQueueEntry.Find(path);
-            if (entry != null)
+            if (entry != null && entry.Action == action)
             {
-                entry.Action = action;
                 entry.TimeAdded = Interface.Controller.Now;
             }
             else
@@ -66,6 +65,7 @@ namespace Console.Plugins
         internal void Process()
         {
             Log.Debug($"Processing plugins queue entry ({Action}, {Path})", 6);
+            
             switch (Action)
             {
                 case PluginsQueueAction.Load:

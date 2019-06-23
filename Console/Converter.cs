@@ -42,5 +42,34 @@ namespace Console
         /// <typeparam name="T">Type to return</typeparam>
         /// <returns>Instance of the specified type</returns>
         public static T GetInstanceOf<T>() => Activator.CreateInstance<T>();
+
+        /// <summary>
+        /// Gets an instance of the specified type
+        /// </summary>
+        /// <returns>Instance of the specified type</returns>
+        public static object GetInstanceOf(Type type) => Activator.CreateInstance(type);
+
+        public static bool TryConvert(object input, Type type, out object result)
+        {
+            Log.Debug($"Trying to convert to {type.FullName}", 5);
+            
+            try
+            {
+                result = Convert.ChangeType(input, type);
+                
+                // ReSharper disable once JoinNullCheckWithUsage
+                if (result == null)
+                    throw new Exception();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            
+            result = GetInstanceOf(type);
+            return false;
+        }
     }
 }

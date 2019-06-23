@@ -157,7 +157,10 @@ namespace Console.Plugins
         /// </summary>
         public void UpdateDependencies()
         {
-            Log.Debug($"Calling dependencies in plugin {Name}", 4);
+            if (!IsLoaded)
+                return;
+            
+            Log.Debug($"Updating dependencies in plugin {Name}", 5);
             for (var i = 0; i < Dependencies.Count; i++)
             {
                 Dependencies[i].Update();
@@ -178,7 +181,7 @@ namespace Console.Plugins
         /// <returns>Result value</returns>
         private object CallHook(string name, params object[] args)
         {
-            Log.Debug($"Calling a hook on {Name} ({name})", 5);
+            Log.Debug($"Calling a hook on {Name} ({name})", 8);
             
             if (!IsLoaded)
                 return null;
@@ -241,9 +244,13 @@ namespace Console.Plugins
         private object OnCallHook(string name, object[] args)
         {
             var hook = FindHook(name, args);
+            if (hook == null)
+                return null;
+            
             try
             {
-                return hook?.Method?.Invoke(this, hook.FormatArguments(args));
+                Log.Debug($"Calling an existing hook on {Name} ({name})", 6);
+                return hook.Method?.Invoke(this, hook.FormatArguments(args));
             }
             catch (Exception e)
             {
