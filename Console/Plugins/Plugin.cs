@@ -126,6 +126,11 @@ namespace Console.Plugins
                     {
                         AddDependency(dependencyAttribute.Name, field);
                     }
+
+                    if (field.GetCustomAttribute<VariableAttribute>(false) is VariableAttribute variableAttribute)
+                    {
+                        AddVariable(variableAttribute.Name, field);
+                    }
                 }
             }
             
@@ -279,6 +284,22 @@ namespace Console.Plugins
         /// <param name="method">Method Info instance of the needed method</param>
         public void AddCommand(string name, MethodInfo method)
         {
+            if (!Command.HasMatchingSignature(method))
+            {
+                Log.Warning($"Plugin {Title} tried to register a command with incorrect method arguments");
+                return;
+            }
+            
+            AddCommand(name, arg => method?.Invoke(this, new object[] {arg}));
+        }
+        
+        /// <summary>
+        /// Add a command to plugin
+        /// </summary>
+        /// <param name="name">Command name</param>
+        /// <param name="action">Action to be executed</param>
+        public void AddCommand(string name, Action<CommandArgument> action)
+        {
             name = name.ToLower();
             if (Commands.ContainsKey(name))
             {
@@ -286,13 +307,24 @@ namespace Console.Plugins
                 return;
             }
 
-            if (!Command.HasMatchingSignature(method))
+            Commands[name] = new Command(this, name, action);
+        }
+
+        /// <summary>
+        /// Add a command to plugin
+        /// </summary>
+        /// <param name="name">Command name</param>
+        /// <param name="memberInfo">Member Info instance of the needed field/property</param>
+        public void AddVariable(string name, MemberInfo memberInfo)
+        {
+            name = name.ToLower();
+            if (Commands.ContainsKey(name))
             {
-                Log.Warning($"Plugin {Title} tried to register a command with incorrect method arguments");
+                Log.Warning($"Plugin {Title} tried to register an existing command");
                 return;
             }
 
-            Commands[name] = new Command(this, name, method);
+            Commands[name] = new Command(this, name, memberInfo);
         }
 
         /// <summary>

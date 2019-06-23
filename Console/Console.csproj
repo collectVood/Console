@@ -52,6 +52,7 @@
     <Compile Include="Plugins\Attributes\DescriptionAttribute.cs" />
     <Compile Include="Plugins\Attributes\HookMethodAttribute.cs" />
     <Compile Include="Plugins\Attributes\InfoAttribute.cs" />
+    <Compile Include="Plugins\Attributes\VariableAttribute.cs" />
     <Compile Include="Security\Encryptor.cs" />
     <Compile Include="Files\DataFileSystem.cs" />
     <Compile Include="Files\File.cs" />
