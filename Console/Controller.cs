@@ -96,7 +96,6 @@ namespace Console
             
             // Initializing console
             ConsoleManager = new ConsoleManager();
-            ConsoleManager.Initialize();
             
             // Loading core plugins
             Plugin.CreatePlugin(typeof(Core), string.Empty, false);

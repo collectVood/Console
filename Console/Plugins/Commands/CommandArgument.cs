@@ -35,6 +35,16 @@ namespace Console.Plugins.Commands
             return true;
         }
 
+        /// <summary>
+        /// Tests whether command argument has enough arguments
+        /// </summary>
+        /// <param name="amount">Amount of arguments</param>
+        /// <returns>True if has <see cref="amount"/> entries</returns>
+        public bool HasArgs(int amount = 1)
+        {
+            return Args.Length >= amount;
+        }
+
         public void Reply(string message)
         {
             Replies.Add(message);

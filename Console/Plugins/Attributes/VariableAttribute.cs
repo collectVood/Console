@@ -2,13 +2,13 @@ using System;
 
 namespace Console.Plugins.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
-    public class CommandAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class VariableAttribute : Attribute
     {
         internal string Name { get; }
         internal string Prefix { get; }
 
-        public CommandAttribute(string name, string prefix = null)
+        public VariableAttribute(string name, string prefix = null)
         {
             Name = name;
             Prefix = prefix;

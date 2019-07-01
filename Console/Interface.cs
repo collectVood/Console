@@ -100,7 +100,7 @@ namespace Console
         /// </summary>
         public static void UpdateDependencies()
         {
-            Log.Debug("Updating all dependencies", 3);
+            Log.Debug("Updating all dependencies", 4);
             Plugins.ForEach(x => x.UpdateDependencies());
         }
         

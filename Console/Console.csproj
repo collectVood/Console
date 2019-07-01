@@ -11,6 +11,8 @@
     <AssemblyName>Console</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetExecutable>nuget</NuGetExecutable>
+    <NuGetSpec>Console.nuspec</NuGetSpec>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,10 +36,9 @@
     <Prefer32bit>false</Prefer32bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2"/>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -52,6 +53,7 @@
     <Compile Include="Plugins\Attributes\DescriptionAttribute.cs" />
     <Compile Include="Plugins\Attributes\HookMethodAttribute.cs" />
     <Compile Include="Plugins\Attributes\InfoAttribute.cs" />
+    <Compile Include="Plugins\Attributes\VariableAttribute.cs" />
     <Compile Include="Security\Encryptor.cs" />
     <Compile Include="Files\DataFileSystem.cs" />
     <Compile Include="Files\File.cs" />
@@ -70,7 +72,7 @@
     <Compile Include="Plugins\Network\Client\Client.cs" />
     <Compile Include="Plugins\Network\Events.cs" />
     <Compile Include="Plugins\Network\Server\Client.cs" />
-    <Compile Include="Plugins\Network\Server\BaseServer.cs" />
+    <Compile Include="Plugins\Network\Server\Server.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginsQueue.cs" />
     <Compile Include="Plugins\Timers\Timer.cs" />
@@ -79,15 +81,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-    -->
+  <Target Name="AfterBuild">
+    <Exec Command="&quot;$(NuGetExecutable)&quot; pack &quot;$(ProjectFileName)&quot;"/>
+    <Message Text="Package packed"/>
+  </Target>
 </Project>

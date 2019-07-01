@@ -11,13 +11,13 @@ namespace Console.Plugins.Network.Client
             try
             {
                 Client = new TcpClient();
+                
                 try
                 {
                     Client.Connect(address, port);
                 }
                 catch (SocketException)
                 {
-                    Log.Warning("Unable to connect to this server.");
                     return;
                 } 
 

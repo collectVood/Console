@@ -113,7 +113,7 @@ namespace Console.Plugins
 
                     if (method.GetCustomAttribute<CommandAttribute>(false) is CommandAttribute commandAttribute)
                     {
-                        AddCommand(commandAttribute.Name, method);
+                        AddCommand(commandAttribute.Name, method, commandAttribute.Prefix);
                     }
                 }
 
@@ -125,6 +125,22 @@ namespace Console.Plugins
                     if (field.GetCustomAttribute<DependencyAttribute>(false) is DependencyAttribute dependencyAttribute)
                     {
                         AddDependency(dependencyAttribute.Name, field);
+                    }
+
+                    if (field.GetCustomAttribute<VariableAttribute>(false) is VariableAttribute variableAttribute)
+                    {
+                        AddVariable(variableAttribute.Name, field, variableAttribute.Prefix);
+                    }
+                }
+
+                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var propertiesCount = properties.Length;
+                for (var j = 0; j < propertiesCount; j++)
+                {
+                    var property = properties[j];
+                    if (property.GetCustomAttribute<VariableAttribute>(false) is VariableAttribute variableAttribute)
+                    {
+                        AddVariable(variableAttribute.Name, property, variableAttribute.Prefix);
                     }
                 }
             }
@@ -157,7 +173,10 @@ namespace Console.Plugins
         /// </summary>
         public void UpdateDependencies()
         {
-            Log.Debug($"Calling dependencies in plugin {Name}", 4);
+            if (!IsLoaded)
+                return;
+            
+            Log.Debug($"Updating dependencies in plugin {Name}", 5);
             for (var i = 0; i < Dependencies.Count; i++)
             {
                 Dependencies[i].Update();
@@ -178,7 +197,7 @@ namespace Console.Plugins
         /// <returns>Result value</returns>
         private object CallHook(string name, params object[] args)
         {
-            Log.Debug($"Calling a hook on {Name} ({name})", 5);
+            Log.Debug($"Calling a hook on {Name} ({name})", 8);
             
             if (!IsLoaded)
                 return null;
@@ -241,9 +260,13 @@ namespace Console.Plugins
         private object OnCallHook(string name, object[] args)
         {
             var hook = FindHook(name, args);
+            if (hook == null)
+                return null;
+            
             try
             {
-                return hook?.Method?.Invoke(this, hook.FormatArguments(args));
+                Log.Debug($"Calling an existing hook on {Name} ({name})", 6);
+                return hook.Method?.Invoke(this, hook.FormatArguments(args));
             }
             catch (Exception e)
             {
@@ -270,7 +293,25 @@ namespace Console.Plugins
         /// </summary>
         /// <param name="name">Command name</param>
         /// <param name="method">Method Info instance of the needed method</param>
-        public void AddCommand(string name, MethodInfo method)
+        /// <param name="prefix">Command prefix</param>
+        public void AddCommand(string name, MethodInfo method, string prefix = null)
+        {
+            if (!Command.HasMatchingSignature(method))
+            {
+                Log.Warning($"Plugin {Title} tried to register a command with incorrect method arguments");
+                return;
+            }
+            
+            AddCommand(name, arg => method?.Invoke(this, new object[] {arg}), prefix);
+        }
+
+        /// <summary>
+        /// Add a command to plugin
+        /// </summary>
+        /// <param name="name">Command name</param>
+        /// <param name="action">Action to be executed</param>
+        /// <param name="prefix">Command prefix</param>
+        public void AddCommand(string name, Action<CommandArgument> action, string prefix = null)
         {
             name = name.ToLower();
             if (Commands.ContainsKey(name))
@@ -279,13 +320,25 @@ namespace Console.Plugins
                 return;
             }
 
-            if (!Command.HasMatchingSignature(method))
+            Commands[name] = new Command(this, name, action, prefix);
+        }
+
+        /// <summary>
+        /// Add a variable to plugin
+        /// </summary>
+        /// <param name="name">Variable name</param>
+        /// <param name="memberInfo">Member Info instance of the needed field/property</param>
+        /// <param name="prefix">Variable prefix</param>
+        public void AddVariable(string name, MemberInfo memberInfo, string prefix = null)
+        {
+            name = name.ToLower();
+            if (Commands.ContainsKey(name))
             {
-                Log.Warning($"Plugin {Title} tried to register a command with incorrect method arguments");
+                Log.Warning($"Plugin {Title} tried to register an existing variable");
                 return;
             }
 
-            Commands[name] = new Command(this, name, method);
+            Commands[name] = new Command(this, name, memberInfo, prefix);
         }
 
         /// <summary>

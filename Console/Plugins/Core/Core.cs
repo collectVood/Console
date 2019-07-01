@@ -37,7 +37,7 @@ namespace Console.Plugins.Core
             if (result is bool && result.Equals(false) || !arg.Execute())
                 return;
             
-            Interface.CallHook("OnCommand", arg);
+            Interface.CallHook("OnCommandExecuted", arg);
         }
         
         #endregion
@@ -89,18 +89,11 @@ namespace Console.Plugins.Core
             Interface.Load(arg.Args[0]);
         }
 
-        [Command("setdebug")]
-        public void CommandSetDebug(CommandArgument arg)
+        [Variable("debug")]
+        public int DebugLevel
         {
-            if (arg.Args.Length != 1 || !int.TryParse(arg.Args[0], out var level))
-            {
-                arg.Reply("Please, use \"core.setdebug N\"");
-                return;
-            }
-
-            arg.Reply($"Old debug level: {Interface.Controller.DebugLevel}");
-            Interface.Controller.DebugLevel = level;
-            arg.Reply($"New debug level: {Interface.Controller.DebugLevel}");
+            get => Interface.Controller.DebugLevel;
+            set => Interface.Controller.DebugLevel = value;
         }
         
         #endregion

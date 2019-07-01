@@ -43,7 +43,7 @@ namespace Console.Plugins.Network
                     if (string.IsNullOrEmpty(message))
                         continue;
 
-                    OnNewMessage(new BaseMessage(this, message));
+                    OnNewMessage(new BaseMessage(null, message));
                 }
             });
             

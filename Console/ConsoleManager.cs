@@ -9,6 +9,12 @@ namespace Console
     {
         #region Variables
 
+        public static string ConsoleTitle
+        {
+            get => System.Console.Title;
+            set => System.Console.Title = value;
+        }
+
         private float _updateFrequency = 0.25f;
         
         private string _input = string.Empty;
@@ -26,21 +32,21 @@ namespace Console
                 s = s.Remove(0, 1);
             }
             else
-            {
                 return data;
-            }
 
             var pluginsCount = Interface.Plugins.Count;
             var currentIndex = 0;
+            
             for (var i = 0; i < pluginsCount; i++)
             {
                 var plugin = Interface.Plugins[i];
                 foreach (var kvp in plugin.Commands)
                 {
-                    if (!kvp.Key.StartsWith(s) && !kvp.Value.FullName.StartsWith(s)) continue;
+                    if (!kvp.Value.Name.StartsWith(s) && !kvp.Value.FullName.StartsWith(s))
+                        continue;
                     
                     Array.Resize(ref data, data.Length + 1);
-                    data[currentIndex++] = $"/{kvp.Value.FullName}";
+                    data[currentIndex++] = '/' + kvp.Value.Name;
                 }
             }
 
@@ -64,21 +70,24 @@ namespace Console
         
         private double _nextUpdate;
 
-        private int LineWidth => System.Console.BufferWidth;
-        private bool Valid => LineWidth > 0;
+        private int BufferWidth => System.Console.BufferWidth;
+        private bool HasBuffer => BufferWidth > 0;
+        
+        #endregion
+        
+        #region Constructor
+
+        internal ConsoleManager()
+        {
+            const string defaultTitle = "The Console";
+            
+            System.Console.OutputEncoding = Encoding.UTF8;
+            ConsoleTitle = defaultTitle;
+        }
         
         #endregion
         
         #region Console
-
-        /// <summary>
-        /// Initialize console basic settings
-        /// </summary>
-        public static void Initialize()
-        {
-            System.Console.Title = "Console PROJECT";
-            System.Console.OutputEncoding = Encoding.UTF8;
-        }
 
         /// <summary>
         /// Clear lines
@@ -87,7 +96,7 @@ namespace Console
         private void ClearLine(int numLines)
         {
             System.Console.CursorLeft = 0;
-            System.Console.Write(new string(' ', LineWidth * numLines));
+            System.Console.Write(new string(' ', BufferWidth * numLines));
             System.Console.CursorTop -= numLines;
             System.Console.CursorLeft = 0;
         }
@@ -97,7 +106,7 @@ namespace Console
         /// </summary>
         private void RedrawInputLine()
         {
-            if (_nextUpdate - _updateFrequency > Interface.Controller.Now || LineWidth <= 0)
+            if (_nextUpdate - _updateFrequency > Interface.Controller.Now || BufferWidth <= 0)
                 return;
 
             try
@@ -108,8 +117,8 @@ namespace Console
                 if (string.IsNullOrEmpty(_input)) return;
                 
                 System.Console.ForegroundColor = Log.ColorInput;
-                System.Console.Write(_input.Length >= LineWidth - 2
-                    ? _input.Substring(_input.Length - (LineWidth - 2))
+                System.Console.Write(_input.Length >= BufferWidth - 2
+                    ? _input.Substring(_input.Length - (BufferWidth - 2))
                     : _input);
             }
             catch (Exception e)
@@ -123,7 +132,7 @@ namespace Console
         /// </summary>
         public void Update()
         {
-            if (!Valid)
+            if (!HasBuffer)
                 return;
 
             if (_nextUpdate < Interface.Controller.Now)
@@ -253,7 +262,7 @@ namespace Console
         {
             System.Console.ForegroundColor = color;
             ClearLine(message.Split('\n')
-                .Aggregate(0, (sum, line) => sum + (int) Math.Ceiling(line.Length / (double) LineWidth)));
+                .Aggregate(0, (sum, line) => sum + (int) Math.Ceiling(line.Length / (double) BufferWidth)));
             System.Console.WriteLine(message);
             RedrawInputLine();
         }
