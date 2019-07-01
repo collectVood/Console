@@ -132,6 +132,17 @@ namespace Console.Plugins
                         AddVariable(variableAttribute.Name, field);
                     }
                 }
+
+                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var propertiesCount = properties.Length;
+                for (var j = 0; j < propertiesCount; j++)
+                {
+                    var property = properties[j];
+                    if (property.GetCustomAttribute<VariableAttribute>(false) is VariableAttribute variableAttribute)
+                    {
+                        AddVariable(variableAttribute.Name, property);
+                    }
+                }
             }
             
             Interface.Plugins.Add(this);
