@@ -12,6 +12,9 @@
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <license type="file">LICENSE.md</license>
         <tags>Console Plugins CLI Hooks Commands Logs Logging Data Files</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="12.0.0" />
+        </dependencies>
     </metadata>
     <files>
         <file src="$SolutionDir$LICENSE.md"/>
