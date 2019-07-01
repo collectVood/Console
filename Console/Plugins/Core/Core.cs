@@ -37,7 +37,7 @@ namespace Console.Plugins.Core
             if (result is bool && result.Equals(false) || !arg.Execute())
                 return;
             
-            Interface.CallHook("OnCommand", arg);
+            Interface.CallHook("OnCommandExecuted", arg);
         }
         
         #endregion

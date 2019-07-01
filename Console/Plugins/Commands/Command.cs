@@ -13,27 +13,29 @@ namespace Console.Plugins.Commands
         public bool IsVariable { get; }
         
         public string Name { get; }
+        public string Prefix { get; }
         public string FullName { get; }
 
-        internal Command(Plugin plugin, string name, Action<CommandArgument> action)
-            : this(plugin, name)
+        internal Command(Plugin plugin, string name, Action<CommandArgument> action, string prefix = null)
+            : this(plugin, name, prefix)
         {
             CommandAction = action;
             IsVariable = false;
         }
 
-        internal Command(Plugin plugin, string name, MemberInfo memberInfo)
-            : this(plugin, name)
+        internal Command(Plugin plugin, string name, MemberInfo memberInfo, string prefix = null)
+            : this(plugin, name, prefix)
         {
             MemberInfo = memberInfo;
             IsVariable = true;
         }
 
-        private Command(Plugin plugin, string name)
+        private Command(Plugin plugin, string name, string prefix = null)
         {
             Owner = plugin;
             Name = name.ToLower();
-            FullName = $"{plugin.Name}.{name}".ToLower();
+            Prefix = prefix ?? plugin.Name.ToLower();
+            FullName = $"{prefix}.{name}";
         }
 
         /// <summary>

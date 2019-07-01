@@ -113,7 +113,7 @@ namespace Console.Plugins
 
                     if (method.GetCustomAttribute<CommandAttribute>(false) is CommandAttribute commandAttribute)
                     {
-                        AddCommand(commandAttribute.Name, method);
+                        AddCommand(commandAttribute.Name, method, commandAttribute.Prefix);
                     }
                 }
 
@@ -129,7 +129,7 @@ namespace Console.Plugins
 
                     if (field.GetCustomAttribute<VariableAttribute>(false) is VariableAttribute variableAttribute)
                     {
-                        AddVariable(variableAttribute.Name, field);
+                        AddVariable(variableAttribute.Name, field, variableAttribute.Prefix);
                     }
                 }
 
@@ -140,7 +140,7 @@ namespace Console.Plugins
                     var property = properties[j];
                     if (property.GetCustomAttribute<VariableAttribute>(false) is VariableAttribute variableAttribute)
                     {
-                        AddVariable(variableAttribute.Name, property);
+                        AddVariable(variableAttribute.Name, property, variableAttribute.Prefix);
                     }
                 }
             }
@@ -293,7 +293,8 @@ namespace Console.Plugins
         /// </summary>
         /// <param name="name">Command name</param>
         /// <param name="method">Method Info instance of the needed method</param>
-        public void AddCommand(string name, MethodInfo method)
+        /// <param name="prefix">Command prefix</param>
+        public void AddCommand(string name, MethodInfo method, string prefix = null)
         {
             if (!Command.HasMatchingSignature(method))
             {
@@ -301,15 +302,16 @@ namespace Console.Plugins
                 return;
             }
             
-            AddCommand(name, arg => method?.Invoke(this, new object[] {arg}));
+            AddCommand(name, arg => method?.Invoke(this, new object[] {arg}), prefix);
         }
-        
+
         /// <summary>
         /// Add a command to plugin
         /// </summary>
         /// <param name="name">Command name</param>
         /// <param name="action">Action to be executed</param>
-        public void AddCommand(string name, Action<CommandArgument> action)
+        /// <param name="prefix">Command prefix</param>
+        public void AddCommand(string name, Action<CommandArgument> action, string prefix = null)
         {
             name = name.ToLower();
             if (Commands.ContainsKey(name))
@@ -318,24 +320,25 @@ namespace Console.Plugins
                 return;
             }
 
-            Commands[name] = new Command(this, name, action);
+            Commands[name] = new Command(this, name, action, prefix);
         }
 
         /// <summary>
-        /// Add a command to plugin
+        /// Add a variable to plugin
         /// </summary>
-        /// <param name="name">Command name</param>
+        /// <param name="name">Variable name</param>
         /// <param name="memberInfo">Member Info instance of the needed field/property</param>
-        public void AddVariable(string name, MemberInfo memberInfo)
+        /// <param name="prefix">Variable prefix</param>
+        public void AddVariable(string name, MemberInfo memberInfo, string prefix = null)
         {
             name = name.ToLower();
             if (Commands.ContainsKey(name))
             {
-                Log.Warning($"Plugin {Title} tried to register an existing command");
+                Log.Warning($"Plugin {Title} tried to register an existing variable");
                 return;
             }
 
-            Commands[name] = new Command(this, name, memberInfo);
+            Commands[name] = new Command(this, name, memberInfo, prefix);
         }
 
         /// <summary>

@@ -6,10 +6,12 @@ namespace Console.Plugins.Attributes
     public class VariableAttribute : Attribute
     {
         internal string Name { get; }
+        internal string Prefix { get; }
 
-        public VariableAttribute(string name)
+        public VariableAttribute(string name, string prefix = null)
         {
             Name = name;
+            Prefix = prefix;
         }
     }
 }
