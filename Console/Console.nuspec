@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <projectUrl>https://github.com/TheConsole/Console</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
-    <copyright>Copyright (c) 2018-2019 Iv Misticos</copyright>
-	<license type="expression">MIT</license>
-    <tags>Console Plugins CLI</tags>
-  </metadata>
+<package>
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
+        <projectUrl>https://github.com/TheConsole/Console</projectUrl>
+        <description>$description$</description>
+        <copyright>$copyright$</copyright>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <license type="file">LICENSE.md</license>
+        <tags>Console Plugins CLI Hooks Commands Logs Logging Data Files</tags>
+    </metadata>
+    <files>
+        <file src="$SolutionDir$LICENSE.md"/>
+    </files>
 </package>

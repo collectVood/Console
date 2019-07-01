@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Console")]
-[assembly: AssemblyDescription("Plugins, commands, hooks, etc system for console")]
+[assembly: AssemblyDescription("Application that allows you to create plugins and use them with this project. Some of the features: Hooks, commands, variables, logs, datafiles system and etc.")]
 [assembly: AssemblyCompany("Iv Misticos")]
 [assembly: AssemblyProduct("Console")]
 [assembly: AssemblyCopyright("Copyright © Iv Misticos 2018-2019")]
