@@ -1,4 +1,3 @@
-using System.Data.Linq;
 using Console.Security;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -23,18 +22,14 @@ namespace Tests
             var buffer = new byte[8192];
             _randomizer.NextBytes(buffer);
             
-            var bufferBinary = new Binary(buffer);
-            
             var password = new byte[512];
             _randomizer.NextBytes(password);
 
             var encrypted = Encryptor.Encrypt(buffer, password);
-            var encryptedBinary = new Binary(encrypted);
-            Assert.IsFalse(bufferBinary.Equals(encryptedBinary));
+            Assert.IsFalse(Helpers.SequenceEquals(buffer, encrypted));
 
             var decrypted = Encryptor.Encrypt(encrypted, password);
-            var decryptedBinary = new Binary(decrypted);
-            Assert.IsTrue(bufferBinary.Equals(decryptedBinary));
+            Assert.IsTrue(Helpers.SequenceEquals(buffer, decrypted));
         }
     }
 }

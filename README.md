@@ -10,6 +10,10 @@ Some of the features: Hooks, commands, variables, logs, datafiles system and etc
 We always love receiving new contributions.\
 Detailed guide on it: [Contributing](CONTRIBUTING.md)
 
+## How to build
+
+Take a look at [Building Guide](BUILDING.md)
+
 ## More links
 
 License: [CLICK](LICENSE.md)\
