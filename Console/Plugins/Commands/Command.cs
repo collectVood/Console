@@ -35,7 +35,7 @@ namespace Console.Plugins.Commands
             Owner = plugin;
             Name = name.ToLower();
             Prefix = prefix ?? plugin.Name.ToLower();
-            FullName = $"{prefix}.{name}";
+            FullName = $"{Prefix}.{name}";
         }
 
         /// <summary>
